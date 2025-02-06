@@ -67,4 +67,9 @@ class User extends Authenticatable
         }
         return asset('imgs/user.jpg');
     }
+
+    public function medicine()
+    {
+        return $this->hasMany(Medicine::class);
+    }
 }
