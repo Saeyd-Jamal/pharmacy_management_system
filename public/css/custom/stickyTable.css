@@ -68,6 +68,9 @@ th.sticky,td.sticky {
 th.sticky {
     background-color: #5b9bd5 !important;
 }
-td.sticky {
+tbody td.sticky {
     background-color: white !important;
+}
+tfoot td.sticky {
+    background-color: #5b9bd5 !important;
 }

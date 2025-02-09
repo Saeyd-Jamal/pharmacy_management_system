@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class PurchaseInvoiceItem extends Model
 {
     use HasFactory;
-   
+
+    protected $table = 'purchase_invoice_items';
 
     protected $fillable = [
         'quantity',
@@ -16,12 +17,11 @@ class PurchaseInvoiceItem extends Model
         'total_price',
         'purchase_invoice_id',
         'medicine_id',
-        
     ];
 
-    
 
-    public function purchaseinvoice()
+    // Relationship
+    public function purchaseInvoice()
     {
         return $this->belongsTo(PurchaseInvoice::class);
     }

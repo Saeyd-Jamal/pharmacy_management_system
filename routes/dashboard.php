@@ -41,6 +41,9 @@ Route::group([
     Route::post('report/export', [ReportController::class,'export'])->name('report.export');
 
     /* ********************************************************** */ 
+    Route::get('medicines/search', [MedicineConrtoller::class,'search'])->name('medicines.search');
+
+    Route::post('purchaseInvoices/print', [PurchaseInvoiceConrtoller::class,'show'])->name('purchaseInvoices.print');
 
 
     /* ********************************************************** */
@@ -55,11 +58,8 @@ Route::group([
         'suppliers' => SupplierConrtoller::class,
         'categories' => CategoryConrtoller::class,
         'medicines' => MedicineConrtoller::class,
-        'purchaseinvoices' => PurchaseInvoiceConrtoller::class,
-        'purchaseinvoiceitems' => PurchaseInvoiceItemConrtoller::class,
-        'salesinvoices' => SaleInvoiceConrtoller::class,
-        'salesinvoiceitems' => SaleInvoiceItem::class,
-
+        'purchaseInvoices' => PurchaseInvoiceConrtoller::class,
+        'salesInvoices' => SaleInvoiceConrtoller::class,
     ]);
     /* ********************************************************** */ 
 });

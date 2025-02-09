@@ -1,4 +1,5 @@
 @props([
+    'optionsId' => null,
     'options' => [],
     'name',
     'id' => null,
@@ -22,9 +23,15 @@
     ])}}
     >
     <option value="" @selected(old($name, $value) == null)>إختر القيمة</option>
-    @foreach ($options as $item)
-        <option value="{{ $item }}" @selected(old($name, $value) == $item)>{{ $item }}</option>
-    @endforeach
+    @if($optionsId!= null)
+        @foreach ($optionsId as $item)
+            <option value="{{ $item->id }}" @selected(old($name, $value) == $item->id)>{{ $item->name }}</option>
+        @endforeach
+    @else
+        @foreach ($options as $item)
+            <option value="{{ $item }}" @selected(old($name, $value) == $item)>{{ $item }}</option>
+        @endforeach
+    @endif
 </select>
 
 {{-- Validation --}}

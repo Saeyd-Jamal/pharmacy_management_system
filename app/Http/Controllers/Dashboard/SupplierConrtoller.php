@@ -36,21 +36,20 @@ class SupplierConrtoller extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'phone_number' => 'required',
-            'address' => 'required',
-            'contact_person' => 'required',
-            
+            'name' => 'required|string',
+            'email' => 'nullable|email',
+            'phone_number' => 'nullable|integer',
+            'address' => 'nullable|string',
+            'contact_person' => 'nullable|string',
         ]);
         Supplier::create($request->all());
-        return redirect()->route('dashboard.suppliers.index')->with('success', __('Item updated successfully.'));
+        return redirect()->route('dashboard.suppliers.index')->with('success', __('Item updated successfully'));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Supplier $supplier)
     {
         //
     }
@@ -58,44 +57,42 @@ class SupplierConrtoller extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Supplier $supplier)
     {
         $this->authorize('edit', Supplier::class);
-        $suppliers = Supplier::findOrFail($id);
-        return view('dashboard.suppliers.edit', compact('suppliers'));
+        $btn_label = "تعديل";
+        return view('dashboard.suppliers.edit', compact('supplier', 'btn_label'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Supplier $supplier)
     {
         $this->authorize('edit', Supplier::class);
-
         $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'phone_number' => 'required',
-            'address' => 'required',
-            'contact_person' => 'required',
-            
+            'name' => 'required|string',
+            'email' => 'nullable|email',
+            'phone_number' => 'nullable|integer',
+            'address' => 'nullable|string',
+            'contact_person' => 'nullable|string',
         ]);
-
-        $suppliers = Supplier::findOrFail($id);
-
-        $suppliers->update($request->all());
-
+        $supplier->update($request->all());
         return redirect()->route('dashboard.suppliers.index')->with('success', __('Item added successfully.'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Supplier $supplier)
     {
         $this->authorize('delete', Supplier::class);
-        $suppliers = Supplier::findOrFail($id);
-        $suppliers->delete();
+        $supplier->delete();
+
+        $request = request();
+        if($request->ajax()){
+            return response()->json(['message' => __('Item deleted successfully.')]);
+        }
         return redirect()->route('dashboard.suppliers.index')->with('success', __('Item deleted successfully.'));
     }
 }

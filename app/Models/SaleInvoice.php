@@ -8,19 +8,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class SaleInvoice extends Model
 {
     use HasFactory;
-   
 
     protected $fillable = [
         'customer_name',
         'date',
         'total_amount',
-        
+        'created_by',
+        'created_by_name',
     ];
 
-
-    public function saleinvoiceitem()
+    // Relationships
+    public function user()
     {
-        return $this->hasMany(SaleInvoiceItem::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function medicines()
+    {
+        return $this->belongsToMany(Medicine::class, 'sale_invoice_items')->as('sale_invoice_items');
+    }
 }

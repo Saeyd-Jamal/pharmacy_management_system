@@ -1,110 +1,80 @@
 @if ($errors->any())
-<div class="alert alert-danger">
-    <h3> Ooops Error</h3>
-    <ul>
-        @foreach ($errors->all() as $error )
-        <li>{{$error}}</li>
-        @endforeach
-    </ul>
-</div>
+    <div class="alert alert-danger">
+        <h3> Ooops Error</h3>
+        <ul>
+            @foreach ($errors->all() as $key => $error)
+                <li>{{ $key + 1 }} - {{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
 @endif
-
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <!-- Account -->
+            <div class="card-header pb-0 pt-4">
+                <h1 class="card-title h3">{{ isset($btn_label) ? 'تعديل الدواء : ' . $medicine->name : 'إضافة دواء جديد' }}</h1>
+            </div>
+            <hr class="mt-0">
             <div class="card-body pt-4">
                 <div class="row">
-                    <!-- <h3>{{ isset($btn_label) ? "تعديل منتج " . $medicines->name : "اضافة منتج" }}</h3> -->
-                    <div class="mb-4 col-md-6">
-                        <x-form.input label="Name" :value="$medicines->name" name="name" required autofocus />
+                    <div class="mb-4 col-md-4">
+                        <x-form.input label="الاسم" :value="$medicine->name" name="name" required autofocus />
                     </div>
-
-                    <div class="mb-4 col-md-6">
-                        <label for="image">Image</label>
-                        <input type="file" name="image" class="form-control" />
-                        @if ($medicines->image) <!-- تأكد من أن المتغير صحيح -->
-                        <img src="{{ asset('storage/' . $medicines->image) }}" alt="Current Image" height="60">
+                    <div class="mb-4 col-md-4">
+                        <x-form.select label="الصنف" :value="$medicine->category_id" name="category_id" :optionsId="$categories" required />
+                    </div>
+                    <div class="mb-4 col-md-4">
+                        <x-form.select label="المورد" :value="$medicine->supplier_id" name="supplier_id" :optionsId="$suppliers" required />
+                    </div>
+                    <div class="mb-4 col-md-4">
+                        <x-form.input type="number" min="0" label="الكمية" :value="$medicine->quantity" name="quantity" required/>
+                    </div>
+                    <div class="mb-4 col-md-4">
+                        <x-form.input type="number" step="0.01" min="0" label="سعر الوحدة" :value="$medicine->unit_price" name="unit_price" required />
+                    </div>
+                    <div class="mb-4 col-md-4">
+                        <x-form.input type="number" step="0.01" min="0" label="السعر النهائي" :value="$medicine->price" name="price" required />
+                    </div>
+                    <div class="mb-4 col-md-4">
+                        <x-form.input label="تاريخ الإنتاج" type="date" :value="$medicine->production_date" name="production_date" required />
+                    </div>
+                    <div class="mb-4 col-md-4">
+                        <x-form.input label="تاريخ الإنتهاء" type="date" :value="$medicine->explry_date" name="explry_date" required />
+                    </div>
+                    <div class="mb-4 col-md-4">
+                        <x-form.select label="الحالة" :value="$medicine->status ?? 'نشط'" name="status" :options="['نشط', 'موقوف']"/>
+                    </div>
+                    <div class="mb-4 col-md-4">
+                        <x-form.input type="file" label="الصورة" name="imageFile" />
+                        @if ($medicine->image)
+                            <img src="{{ asset('storage/' . $medicine->image) }}" alt="Current Image" height="60">
                         @endif
                     </div>
-
-                    <div class="mb-4 col-md-6">
-                        <x-form.input label="Description" :value="$medicines->description" name="description" required autofocus />
-                    </div>
-
-
-                    <div class="mb-4 col-md-6">
-                        <x-form.input label="Price" :value="$medicines->price" name="price" required autofocus />
-                    </div>
-
-                    <div class="mb-4 col-md-6">
-                        <x-form.input label="Unit Price" :value="$medicines->unit_price" name="unit_price" required autofocus />
-                    </div>
-
-                    <div class="mb-4 col-md-6">
-                        <x-form.input label="Stock Quantity" :value="$medicines->stock_quantity" name="stock_quantity" required autofocus />
-                    </div>
-
-                    <div class="mb-4 col-md-6">
-                        <x-form.input label="Explry Date" :value="$medicines->explry_date" name="explry_date" required autofocus />
-                    </div>
-                   
-                   
-
-                    <div class="mb-4 col-md-6">
-    <x-form.select 
-        label="Category" 
-        :value="$medicines->category_id" 
-        name="category_id" 
-        :options="$categories->pluck('id', 'id')" 
-    />
-</div>
-
-
-                    <!-- <div class="mb-4 col-md-6">
-                        <x-form.select label="Supplier" :value="$medicines->supplier_id" name="supplier_id" :options="$suppliers" />
-                    </div> -->
-
-                    <div class="mb-4 col-md-6">
-    <x-form.select 
-        label="Supplier" 
-        :value="$medicines->supplier_id" 
-        name="supplier_id" 
-        :options="$suppliers->pluck('id', 'id')" 
-    />
-</div>
-
-
-
-
-
-                    <div class="mb-4 col-md-6">
-                        <label for="status" class="form-label">Status</label>
-                        <div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="status" id="status-active" value="1" @checked(old('status', $medicines->status) == 'active' || old('status', $medicines->status) == null)>
-                                <label class="form-check-label" for="status-active">Active</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="status" id="status-inactive" value="0" @checked(old('status', $medicines->status) == 'archived')>
-                                <label class="form-check-label" for="status-inactive">Archived</label>
-                            </div>
-                        </div>
+                    <div class="mb-4 col-md-4">
+                        <x-form.input label="الوصف" :value="$medicine->description" name="description" />
                     </div>
                 </div>
-                <hr />
-               
-
-                
-
-                <div class="mt-2">
+                <div class="mt-2 d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary me-3">
-                        {{ $btn_label ?? 'Add' }}
+                        {{ $btn_label ?? 'إضافة' }}
                     </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            $('#production_date').on('change', function () {
+                // تحديد ان تاريخ الإنتهاء لا يمكن ان يكون اقل من تاريخ الإنتاج
+                $('#explry_date').attr('min', $(this).val());
 
-
+                // حساب تاريخ الانتهاء بزيادة سنيتن من تاريخ الانتاج
+                let productionDate = new Date($(this).val());
+                let expiryDate = new Date(productionDate.setFullYear(productionDate.getFullYear() + 2));
+                $('#explry_date').val(expiryDate.toISOString().split('T')[0]).attr('min', $(this).val());
+            });
+        })
+    </script>
+@endpush

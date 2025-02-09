@@ -14,16 +14,20 @@ return new class extends Migration
         Schema::create('medicines', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('image');
-            $table->string('description');
-            $table->enum('status', ['active', 'archive']);
-            $table->integer('price');
-            $table->integer('unit_price');
-            $table->integer('stock_quantity');
-            $table->date('explry_date');
+            $table->string('slug')->unique();
+            $table->string('image')->nullable();
+            $table->text('description')->nullable();
+            $table->enum('status', ['active', 'archive'])->default('active');
+            $table->decimal('unit_price',8,2)->default(0);
+            $table->decimal('price',8,2)->default(0);
+            $table->integer('quantity')->default(0);
+            $table->date('production_date')->comment('تاريخ الإنتاج');
+            $table->date('explry_date')->comment('تاريخ انتهاء الصلاحية');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->nullOnDelete();
+            $table->string('supplier_name')->nullable();
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+            $table->string('category_name')->nullable();
             $table->timestamps();
         });
     }

@@ -32,6 +32,55 @@
             </a>
         </li>
         @endcan
+        <li class="menu-header small">
+            <span class="menu-header-text" data-i18n="Apps &amp; Pages">الفواتير</span>
+        </li>
+        @can('view','App\\Models\PurchaseInvoice')
+        <li class="menu-item {{ request()->is('purchaseInvoices/*') || request()->is('purchaseInvoices') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.purchaseInvoices.index') }}" class="menu-link">
+                <i class="fa-solid fa-file-invoice me-2"></i>
+                <div data-i18n="purchaseInvoices">فواتير الشراء</div>
+            </a>
+        </li>
+        @endcan
+        @can('view','App\\Models\SaleInvoice')
+        <li class="menu-item {{ request()->is('salesInvoices/*') || request()->is('salesInvoices') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.salesInvoices.index') }}" class="menu-link">
+                <i class="fa-solid fa-receipt me-2"></i>
+                <div data-i18n="salesInvoices">فواتير البيع</div>
+            </a>
+        </li>
+        @endcan
+        <li class="menu-header small">
+            <span class="menu-header-text" data-i18n="Apps &amp; Pages">البيانات</span>
+        </li>
+        @can('view','App\\Models\Medicine')
+        <li class="menu-item {{ request()->is('medicines/*') || request()->is('medicines') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.medicines.index') }}" class="menu-link">
+                <i class="fa-solid fa-prescription-bottle-alt me-2"></i>
+                <div data-i18n="medicines">الأدوية</div>
+            </a>
+        </li>
+        @endcan
+        @can('view','App\\Models\Supplier')
+        <li class="menu-item {{ request()->is('suppliers/*') || request()->is('suppliers') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.suppliers.index') }}" class="menu-link">
+                <i class="fa-solid fa-truck me-2"></i>
+                <div data-i18n="suppliers">الموردين</div>
+            </a>
+        </li>
+        @endcan
+        @can('view','App\\Models\Category')
+        <li class="menu-item {{ request()->is('categories/*') || request()->is('categories') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.categories.index') }}" class="menu-link">
+                <i class="fa-solid fa-layer-group me-2"></i>
+                <div data-i18n="categories">الأصناف</div>
+            </a>
+        </li>
+        @endcan
+        <li class="menu-header small">
+            <span class="menu-header-text" data-i18n="Apps &amp; Pages">إدارة النظام</span>
+        </li>
         @if (Auth::user()->can('view','App\\Models\User') || Auth::user()->can('view','App\\Models\ActivityLog') || Auth::user()->can('view','App\\Models\Constant') || Auth::user()->can('view','App\\Models\Currency'))
         <li class="menu-item">
             <a href="javascript:void(0)" class="menu-link menu-toggle">

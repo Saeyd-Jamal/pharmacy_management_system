@@ -30,8 +30,8 @@
     <x-slot:extra_nav>
         @can('create', 'App\\Models\Medicine')
         <div class="nav-item mx-2">
-            <a href="{{ route('dashboard.medicines.create') }}" class="btn btn-icon text-success m-0">
-                <i class="fa-solid fa-plus fe-16"></i>
+            <a href="{{ route('dashboard.medicines.create') }}" class="btn btn-success text-white m-0">
+                <i class="fa-solid fa-plus fe-16"></i> إضافة
             </a>
         </div>
         @endcan
@@ -65,7 +65,7 @@
                                 <th class="text-white opacity-7 text-center">#</th>
                                 <th class="sticky" style="right: 0;">
                                     <div class="d-flex align-items-center justify-content-between">
-                                        <span>Name</span>
+                                        <span>الاسم</span>
                                         <div class="filter-dropdown ml-4">
                                             <div class="dropdown">
                                                 <button class="btn btn-secondary btn-filter" id="btn-filter-2" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -93,16 +93,16 @@
                                         </div>
                                     </div>
                                 </th>
-                                <th>Image</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th>Price</th>
-                                <th>Unit Price</th>
-                                <th>Stock Quantity</th>
-                                <th>Explry Date</th>
-                                <th>Created By</th>
-                                <th>Supplier Name</th>
-                                <th>Category Name</th>
+                                <th>الحالة</th>
+                                <th>السعر الأساسي</th>
+                                <th>السعر</th>
+                                <th>الكمية</th>
+                                <th>تاريخ الإنتاج</th>
+                                <th>تاريخ الإنتهاء</th>
+                                <th>منشئ من</th>
+                                <th>اسم المورد</th>
+                                <th>الصنف</th>
+                                <th>الوصف</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -125,6 +125,8 @@
         <script src="{{asset('js/plugins/datatable/buttons.html5.min.js')}}"></script>
         <script src="{{asset('js/plugins/datatable/buttons.print.min.js')}}"></script>
         <script src="{{asset('js/plugins/jquery.validate.min.js')}}"></script>
+
+
         <script type="text/javascript">
             $(document).ready(function() {
                 let formatNumber = (number,min = 0) => {
@@ -147,10 +149,6 @@
                     },
                     ajax: {
                         url: '{{ route("dashboard.medicines.index") }}',
-
-
-
-
                         error: function(xhr, status, error) {
                             console.error('AJAX error:', status, error);
                         }
@@ -166,16 +164,16 @@
                         }},
                         { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, class: 'text-center'}, // عمود الترقيم التلقائي
                         { data: 'name', name: 'name', orderable: false},
-                        { data: 'image', name: 'image' , orderable: false},
-                        { data: 'description', name: 'description' , orderable: false},
                         { data: 'status', name: 'status' , orderable: false},
-                        { data: 'price', name: 'price' , orderable: false},
                         { data: 'unit_price', name: 'unit_price' , orderable: false},
-                        { data: 'stock_quantity', name: 'stock_quantity' , orderable: false},
+                        { data: 'price', name: 'price' , orderable: false},
+                        { data: 'quantity', name: 'quantity' , orderable: false},
+                        { data: 'production_date', name: 'production_date' , orderable: false},  
                         { data: 'explry_date', name: 'explry_date' , orderable: false},  
                         { data: 'created_by', name: 'created_by' , orderable: false},
-                        { data: 'category_name', name: 'category_name' , orderable: false},
                         { data: 'supplier_name', name: 'supplier_name' , orderable: false},
+                        { data: 'category_name', name: 'category_name' , orderable: false},
+                        { data: 'description', name: 'description' , orderable: false},
                         { data: 'delete', name: 'delete', orderable: false, class: 'text-center', searchable: false, render: function (data, type, row) {
                             @can('delete','App\\Models\Medicine')
                             return `

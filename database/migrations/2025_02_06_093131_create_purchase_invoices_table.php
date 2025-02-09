@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('purchase_invoices', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->integer('total_amount');
+            $table->decimal('total_amount',8,2)->default(0);
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->nullOnDelete();
+            $table->string('supplier_name')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('created_by_name')->nullable();
             $table->timestamps();
         });
     }

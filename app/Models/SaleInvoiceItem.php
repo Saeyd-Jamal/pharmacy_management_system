@@ -8,19 +8,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class SaleInvoiceItem extends Model
 {
     use HasFactory;
-   
+
+    protected $table = 'sale_invoice_items';
 
     protected $fillable = [
-       'quantity',
-       'unit_price',
-       'total_price',
-       'sale_invoice_id',
-       'medicine_id',
-        
+        'quantity',
+        'unit_price',
+        'total_price',
+        'sale_invoice_id',
+        'medicine_id',
     ];
 
 
-    public function saleinvoice()
+    // Relationships
+    public function saleInvoice()
     {
         return $this->belongsTo(SaleInvoice::class);
     }
@@ -30,5 +31,3 @@ class SaleInvoiceItem extends Model
         return $this->belongsTo(Medicine::class);
     }
 }
-
-

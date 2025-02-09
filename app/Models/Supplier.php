@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Supplier extends Model
 {
     use HasFactory;
-   
+
 
     protected $fillable = [
         'name',
@@ -18,17 +18,13 @@ class Supplier extends Model
         'phone_number',
     ];
 
-    // public function invoice()
-    // {
-    //     return $this->hasMany(Invoice::class);
-    // }
-
+    // Relationships
     public function medicine()
     {
         return $this->hasMany(Medicine::class);
     }
 
-    public function purchaseinvoice()
+    public function purchaseInvoice()
     {
         return $this->hasMany(PurchaseInvoice::class);
     }

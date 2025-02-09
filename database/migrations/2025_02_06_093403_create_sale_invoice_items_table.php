@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('sale_invoice_items', function (Blueprint $table) {
             $table->id();
             $table->integer('quantity');
-            $table->integer('unit_price');
-            $table->integer('total_price');
+            $table->decimal('unit_price',8,2)->default(0);
+            $table->decimal('total_price',8,2)->default(0);
             $table->foreignId('sale_invoice_id')->nullable()->constrained('sale_invoices')->nullOnDelete();
             $table->foreignId('medicine_id')->nullable()->constrained('medicines')->nullOnDelete();
             $table->timestamps();

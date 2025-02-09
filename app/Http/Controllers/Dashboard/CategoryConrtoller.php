@@ -16,7 +16,6 @@ class CategoryConrtoller extends Controller
     public function index()
     {
         $this->authorize('view', Category::class);
-
         $categories = Category::all();
         return view('dashboard.categories.index', compact('categories'));
     }
@@ -27,8 +26,8 @@ class CategoryConrtoller extends Controller
     public function create()
     {
         $this->authorize('create', Category::class);
-        $categories = new Category();
-        return view('dashboard.categories.create', compact('categories'));
+        $category = new Category();
+        return view('dashboard.categories.create', compact('category'));
     }
 
     /**
@@ -37,32 +36,26 @@ class CategoryConrtoller extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'image' => 'required',
-            'description' => 'required',
-           
+            'name' => 'required|string',
+            'imageFile' => 'nullable|file',
+            'description' => 'nullable|string',
         ]);
-        $request->merge([
-            'slug' => Str::slug($request->post('name')),
-        ]);
-
-        $data = $request->except('image');
-        if ($request->hasFile('image')) {
-            $file = $request->file('image'); // upload obj
-            $path = $file->store('uploads', [
+        if ($request->hasFile('imageFile')) {
+            $file = $request->file('imageFile'); // upload obj
+            $path = $file->store('categories', [
                 'disk' => 'public'
             ]);
-            $data['image'] = $path;
+            $request->merge(['image' => $path]);
         }
 
-        Category::create($data);
+        Category::create($request->all());
         return redirect()->route('dashboard.categories.index')->with('success', __('Item updated successfully.'));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Category $category)
     {
         //
     }
@@ -70,61 +63,59 @@ class CategoryConrtoller extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Category $category)
     {
         $this->authorize('edit', Category::class);
-        $categories = Category::findOrFail($id);
-        return view('dashboard.categories.edit', compact('categories'));
+        $btn_label = "تعديل";
+        return view('dashboard.categories.edit', compact('category', 'btn_label'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Category $category)
     {
         $this->authorize('edit', Category::class);
 
         $request->validate([
-            'name' => 'required',
-            'image' => 'required',
-            'description' => 'required',
-            
+            'name' => 'required|string',
+            'image' => 'nullable|file',
+            'description' => 'nullable|string',
         ]);
+        
+        $old_image =  $category->image;
 
-        $categories = Category::findOrFail($id);
-
-        $old_image =  $categories->image;
-        $data = $request->except('image');
-
-        if ($request->hasFile('image')) {
-
-            $file = $request->file('image');
+        if ($request->hasFile('imageFile')) {
+            $file = $request->file('imageFile');
             $path = $file->store('uploads', [
                 'disk' => 'public'
             ]);
-            $data['image'] = $path;
+            $request->merge(['image' => $path]);
         }
 
+        $category->update($request->all());
 
-        $categories->update($data);
-
-
-        if ($old_image && isset($data['image'])) {
+        if ($old_image && $request->hasFile('imageFile')) {
             Storage::disk('public')->delete($old_image);
         }
-
-
         return redirect()->route('dashboard.categories.index')->with('success', __('Item added successfully.'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
         $this->authorize('delete', Category::class);
-        $categories = Category::findOrFail($id);
-        $categories->delete();
+        $img_old = $category->image;
+        $category->delete();
+        if ($img_old) {
+            Storage::disk('public')->delete($img_old);
+        }
+        $request = request();
+        if($request->ajax()){
+            return response()->json(['message' => __('Item deleted successfully.')]);
+        }
         return redirect()->route('dashboard.categories.index')->with('success', __('Item deleted successfully.'));
     }
 }

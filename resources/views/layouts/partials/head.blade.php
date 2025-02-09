@@ -51,6 +51,10 @@
         body{
             font-family: "Almarai", serif;
         }
+        .form-label{
+            font-weight: 600 !important;
+            font-size: 16px !important;
+        }
     </style>
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-semi-dark.css')}}" />
     @stack('styles')
