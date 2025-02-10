@@ -15,6 +15,7 @@ class Medicine extends Model
     protected $fillable = [
         'name',
         'slug',
+        'qr_code',
         'image',
         'status',
         'description',

@@ -81,6 +81,7 @@ class MedicineConrtoller extends Controller
             'explry_date' => 'required|date|after:production_date',
             'supplier_id' => 'required|integer|exists:suppliers,id',
             'category_id' => 'required|integer|exists:categories,id',
+            'qr_code' => 'nullable|string|unique:medicines,qr_code',
         ]);
 
         if ($request->hasFile('imageFile')) {
@@ -146,6 +147,7 @@ class MedicineConrtoller extends Controller
             'explry_date' => 'required|date|after:production_date',
             'supplier_id' => 'required|integer|exists:suppliers,id',
             'category_id' => 'required|integer|exists:categories,id',
+            'qr_code' => 'nullable|string|unique:medicines,qr_code,' . $medicine->id,
         ]);
 
         $old_image =   $medicine->image;
@@ -163,7 +165,6 @@ class MedicineConrtoller extends Controller
             'supplier_name' => Supplier::find($request->supplier_id)->name ?? 'غير محدد',
             'category_name' => Category::find($request->category_id)->name ?? 'غير محدد',
         ]);
-
         $medicine->update($request->all());
 
 
@@ -198,6 +199,7 @@ class MedicineConrtoller extends Controller
         $name = $request->name;
         $category_id = $request->category_id;
         $supplier_id = $request->supplier_id;
+        $qr_code = $request->qr_code;
 
         $medicines = Medicine::with('category', 'supplier');
 
@@ -211,6 +213,10 @@ class MedicineConrtoller extends Controller
 
         if ($supplier_id) {
             $medicines->where('supplier_id', $supplier_id);
+        }
+
+        if ($qr_code) {
+            $medicines->where('qr_code', $qr_code);
         }
         
         return response()->json($medicines->get());

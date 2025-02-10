@@ -13,6 +13,8 @@
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/flatpickr/flatpickr.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/app-invoice.css') }}" />
+
+<link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/select2.css') }}" />
 @endpush
 <div class="row">
     <div class="col-md-9">
@@ -54,44 +56,49 @@
             <div class="card-body pt-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <h4>الأدوية</h4>
-                    <button type="button" class="btn btn-success text-white" id="add-item">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
                 </div>
                 <div class="row">
-                    @foreach ($purchaseInvoice->items as $item)
-                        <div class="card my-2 border border-primary" id="item-0">
-                            <div class="card-body row">
-                                <h4>الدواء رقم - <span>1</span></h4>
-                                <div class="mb-4 col-md-6">
-                                    <label for="name-0" class="form-label">تحديد الدواء</label>
-                                    <div class="input-group search-medicine" data-index="0">
-                                        <span class="input-group-text" id="basic-addon11">
-                                            <i class="ti ti-search"></i>
-                                        </span>
-                                        <x-form.input name="name-0" placeholder="ابحث ...." required readonly/>
+                    @foreach ($purchaseInvoice->medicines as $index => $item)
+                        <div class="repeater-wrapper py-4" data-repeater-item=""  id="item-{{ $index }}">
+                            <div class="d-flex  border border-primary rounded position-relative pe-0">
+                                <div class="row w-100 p-6">
+                                    <div class="col-md-4 col-12">
+                                        <p class="h6 repeater-title">الدواء</p>
+                                        <div class="input-group search-medicine" data-index="{{ $index }}">
+                                            <span class="input-group-text" id="basic-addon11">
+                                                <i class="ti ti-search"></i>
+                                            </span>
+                                            <x-form.input name="name[{{ $index }}]" id="name-{{ $index }}" :value="$item->name" placeholder="ابحث ...." required readonly/>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="medicine_id[{{ $index }}]" value="{{ $item->items->medicine_id }}" id="medicine_id-{{ $index }}" value="">
+                                    <div class="col-md-3 col-12">
+                                        <p class="h6 repeater-title">الكمية</p>
+                                        <x-form.input type="number" min="0" class="quantity  invoice-item-qty" :value="$item->items->quantity" data-index="{{ $index }}" name="quantity[{{ $index }}]" id="quantity-{{ $index }}" required/>
+                                    </div>
+                                    <div class="col-md-3 col-12">
+                                        <p class="h6 repeater-title">سعر الوحدة</p>
+                                        <x-form.input type="number" min="0" class="unit_price invoice-item-price" :value="$item->items->unit_price" data-index="{{ $index }}" name="unit_price[{{ $index }}]" id="unit_price-{{ $index }}" required/>
+                                    </div>
+                                    <div class="col-md-2 col-12">
+                                        <p class="h6 repeater-title">الاجمالي</p>
+                                        <x-form.input type="number" min="0" class="total_price" name="total_price[{{ $index }}]" :value="$item->items->total_price" id="total_price-{{ $index }}" readonly/>
                                     </div>
                                 </div>
-                                <input type="hidden" name="medicine_id-0" id="medicine_id-0" value="">
-                                <div class="mb-4 col-md-6">
-                                    <x-form.input type="number" min="0" max="100" label="الكمية" class="quantity" data-index="0" name="quantity-0" required/>
-                                </div>
-                                <div class="mb-4 col-md-6">
-                                    <x-form.input type="number" min="0" label="سعر الوحدة" class="unit_price" data-index="0" name="unit_price-0" required/>
-                                </div>
-                                <div class="mb-4 col-md-6">
-                                    <x-form.input type="number" min="0" label="الأجمالي" class="total_price" name="total_price-0" readonly/>
+                                <div class="d-flex flex-column align-items-center justify-content-between border-start p-2">
+                                    <i class="ti ti-x ti-lg cursor-pointer remove-item" data-repeater-delete="" data-index="{{ $index }}"></i>
                                 </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
-                <input type="hidden" name="item_count" id="item_count" value="0">
+                <input type="hidden" name="item_count" id="item_count" value="{{ $purchaseInvoice->medicines->count() }}">
                 <div class="row" id="items">
+
                 </div>
-                <div class="mt-2 d-flex justify-content-between">
-                    <button type="button" class="btn btn-danger" id="removeItem">
-                        <i class="fa fa-x"></i> حذف آخر دواء
+                <div class="mt-2 d-flex justify-content-end">
+                    <button type="button" class="btn btn-success text-white" id="add-item">
+                        <i class="fa-solid fa-plus"></i> اضافة
                     </button>
                 </div>
             </div>
@@ -128,7 +135,17 @@
                 </div>
                 <div class="row">
                     <div class="mb-4 col-md-12">
-                        <x-form.input label="اسم الدواء"  name="name_search" class="search_field" data-field="name" placeholder="ابحث ...." />
+                        <label for="qr_code" class="form-label mb-2">اسم الدواء او المسح</label>
+                        <x-form.input type="hidden" class="search_field" name="qr_code_search" readonly  aria-label="Example text with button addon" aria-describedby="scan-btn" />
+                        <div class="input-group">
+                            <x-form.input  name="name_search" class="search_field" data-field="name" placeholder="ابحث ...." />
+                            <button class="btn btn-outline-primary waves-effect" type="button" id="scan-btn">
+                                <i class="fa fa-qrcode"></i>
+                            </button>
+                            <button class="btn btn-outline-primary waves-effect" type="button" id="reset_search">
+                                <i class="fa-solid fa-text-slash"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="mb-4 col-md-6">
                         <x-form.select label="الصنف" name="category_id_search" class="search_field" data-field="category_id" :optionsId="$categories" />
@@ -196,6 +213,7 @@
     <script src="{{ asset('assets/vendor/libs/cleavejs/cleave-phone.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/jquery-repeater/jquery-repeater.js') }}"></script>
 
+    <script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
 
     <script src="{{ asset('assets/js/offcanvas-send-invoice.js') }}"></script>
     <script src="{{ asset('assets/js/app-invoice-add.js') }}"></script>
@@ -230,8 +248,10 @@
                         name : $('#name_search').val(),
                         category_id : $('#category_id_search').val(),
                         supplier_id : $('#supplier_id_search').val(),
+                        qr_code : $('#qr_code_search').val(),
                     },
                     success : function (response) {
+                        console.log(response,$('#qr_code_search').val());
                         $('#search-medicine-list').empty();
                         $.each(response, function (index, value) {
                             $('#search-medicine-list').append(`
@@ -271,53 +291,75 @@
                 $('#search-medicine-modal').modal('hide');
             });
 
-            $('#removeItem')[0].style.setProperty('display', 'none', 'important');
             let item_count = $('#item_count').val();
-            if(item_count > 0){
-                $('#removeItem').css('display', 'inline-flex');
-            }
             $('#add-item').on('click', function () {
                 let index = $('#items').children().length;
                 let item = 
-                    `<div class="card my-2 border border-primary" id="item-${index}">
-                        <div class="card-body row">
-                            <h4>الدواء رقم - <span>${index + 1}</span></h4>
-                            <div class="mb-4 col-md-6">
-                                <label for="name-${index}" class="form-label">تحديد الدواء</label>
-                                <div class="input-group search-medicine" data-index="${index}">
-                                    <span class="input-group-text" id="basic-addon11">
-                                        <i class="ti ti-search"></i>
-                                    </span>
-                                    <x-form.input name="name-${index}" placeholder="ابحث ...." required readonly/>
+                    `<div class="repeater-wrapper py-4" data-repeater-item=""  id="item-${index}">
+                        <div class="d-flex  border border-primary rounded position-relative pe-0">
+                            <div class="row w-100 p-6">
+                                <div class="col-md-4 col-12">
+                                    <p class="h6 repeater-title">الدواء</p>
+                                    <div class="input-group search-medicine" data-index="${index}">
+                                        <span class="input-group-text" id="basic-addon11">
+                                            <i class="ti ti-search"></i>
+                                        </span>
+                                        <x-form.input name="name[${index}]" id="name-${index}" placeholder="ابحث ...." required readonly/>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="medicine_id[${index}]" id="medicine_id-${index}" value="">
+                                <div class="col-md-3 col-12">
+                                    <p class="h6 repeater-title">الكمية</p>
+                                    <x-form.input type="number" min="0" class="quantity  invoice-item-qty" data-index="${index}" name="quantity[${index}]" id="quantity-${index}" required/>
+                                </div>
+                                <div class="col-md-3 col-12">
+                                    <p class="h6 repeater-title">سعر الوحدة</p>
+                                    <x-form.input type="number" min="0" class="unit_price invoice-item-price" data-index="${index}" name="unit_price[${index}]" id="unit_price-${index}" required/>
+                                </div>
+                                <div class="col-md-2 col-12">
+                                    <p class="h6 repeater-title">الاجمالي</p>
+                                    <x-form.input type="number" min="0" class="total_price" name="total_price[${index}]" id="total_price-${index}" readonly/>
                                 </div>
                             </div>
-                            <input type="hidden" name="medicine_id-${index}" id="medicine_id-${index}" value="">
-                            <div class="mb-4 col-md-6">
-                                <x-form.input type="number" min="0" max="100" label="الكمية" class="quantity" data-index="${index}" name="quantity-${index}" required/>
-                            </div>
-                            <div class="mb-4 col-md-6">
-                                <x-form.input type="number" min="0" label="سعر الوحدة" class="unit_price" data-index="${index}" name="unit_price-${index}" required/>
-                            </div>
-                            <div class="mb-4 col-md-6">
-                                <x-form.input type="number" min="0" label="الأجمالي" class="total_price" name="total_price-${index}" readonly/>
+                            <div class="d-flex flex-column align-items-center justify-content-between border-start p-2">
+                                <i class="ti ti-x ti-lg cursor-pointer remove-item" data-repeater-delete="" data-index="${index}"></i>
                             </div>
                         </div>
                     </div>`;
                 $('#items').append(item);
                 $('#item_count').val(index + 1);
                 item_count = index + 1;
-                $('#removeItem').css('display', 'inline-flex');
             });
 
-            $(document).on('click', '#removeItem', function () {
-                let index = $('#items').children().length - 1;
+            $(document).on('click', '.remove-item', function () {
+                let index = $(this).data('index');
                 $('#item-' + index).remove();
                 $('#item_count').val(item_count - 1);
                 item_count -= 1;
-                if(item_count == 0){
-                    $('#removeItem')[0].style.setProperty('display', 'none', 'important');
+            });
+
+
+            $('#scan-btn').click(function() {
+                // هنا ستستخدم كاميرا الهاتف لمسح QR Code
+                // يتم إدخال القيمة الممسوحة في الحقل
+
+                // هذه المحاكاة لمسح QR بواسطة الهاتف أو جهاز ماسح QR يدوي
+                var scannedQrCode = prompt("Scan the QR code value");  // محاكاة المسح
+
+                if (scannedQrCode) {
+                    $('#qr_code_search').val(scannedQrCode);  // إدخال القيمة الممسوحة في الحقل
+                    $('.search_field').trigger('input');
                 }
             });
+
+            $('#reset_search').click(function() {
+                $('.search_field').val('');
+                $('.search_field').trigger('input');
+            });
+
+            // Select2
+            $('#supplier_id').select2();
+
             
         })
     </script>

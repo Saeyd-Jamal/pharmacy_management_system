@@ -43,7 +43,7 @@ Route::group([
     /* ********************************************************** */ 
     Route::get('medicines/search', [MedicineConrtoller::class,'search'])->name('medicines.search');
 
-    Route::post('purchaseInvoices/print', [PurchaseInvoiceConrtoller::class,'show'])->name('purchaseInvoices.print');
+    Route::post('purchaseInvoices/{purchaseInvoice}/print', [PurchaseInvoiceConrtoller::class,'print'])->name('purchaseInvoices.print');
 
 
     /* ********************************************************** */

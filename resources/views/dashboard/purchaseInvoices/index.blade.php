@@ -301,12 +301,12 @@
                             @endcan
                         }},
                         { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, class: 'sticky text-center'}, // عمود الترقيم التلقائي
-                        { data: 'data', name: 'data'  , orderable: false, class: 'sticky text-center'},
-                        { data: 'supplier_name', name: 'supplier_name'  , orderable: false},
-                        { data: 'total_amount', name: 'total_amount'  , orderable: false, render: function (data, type, row) {
+                        { data: 'date', name: 'date'  , orderable: false, class: 'sticky text-center'},
+                        { data: 'supplier_name', name: 'supplier_name'  , orderable: false, class: 'text-center'},
+                        { data: 'total_amount', name: 'total_amount'  , orderable: false, class: 'text-center', render: function (data, type, row) {
                             return formatNumber(data,2);
                         }},
-                        { data: 'count_items', name: 'count_items'  , orderable: false},
+                        { data: 'count_items', name: 'count_items'  , orderable: false, class: 'text-center'},
                         { data: 'created_by', name: 'created_by'  , orderable: false},
                         { data: 'print', name: 'print', orderable: false, searchable: false, render: function (data, type, row) {
                             @can('print','App\\Models\PurchaseInvoice')

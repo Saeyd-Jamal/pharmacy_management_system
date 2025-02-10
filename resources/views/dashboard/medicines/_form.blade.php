@@ -53,6 +53,15 @@
                     <div class="mb-4 col-md-4">
                         <x-form.input label="الوصف" :value="$medicine->description" name="description" />
                     </div>
+                    <div class="mb-4 col-md-4">
+                        <label for="qr_code" class="form-label mb-2">مسح qr</label>
+                        <div class="input-group">
+                            <button class="btn btn-outline-primary waves-effect" type="button" id="scan-btn">
+                                <i class="fa fa-qrcode"></i>
+                            </button>
+                            <x-form.input :value="$medicine->qr_code" name="qr_code" readonly  aria-label="Example text with button addon" aria-describedby="scan-btn" />
+                        </div>
+                    </div>
                 </div>
                 <div class="mt-2 d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary me-3">
@@ -74,6 +83,17 @@
                 let productionDate = new Date($(this).val());
                 let expiryDate = new Date(productionDate.setFullYear(productionDate.getFullYear() + 2));
                 $('#explry_date').val(expiryDate.toISOString().split('T')[0]).attr('min', $(this).val());
+            });
+            $('#scan-btn').click(function() {
+                // هنا ستستخدم كاميرا الهاتف لمسح QR Code
+                // يتم إدخال القيمة الممسوحة في الحقل
+
+                // هذه المحاكاة لمسح QR بواسطة الهاتف أو جهاز ماسح QR يدوي
+                var scannedQrCode = prompt("Scan the QR code value");  // محاكاة المسح
+
+                if (scannedQrCode) {
+                    $('#qr_code').val(scannedQrCode);  // إدخال القيمة الممسوحة في الحقل
+                }
             });
         })
     </script>
