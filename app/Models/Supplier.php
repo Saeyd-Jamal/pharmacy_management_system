@@ -19,13 +19,13 @@ class Supplier extends Model
     ];
 
     // Relationships
-    public function medicine()
+    public function medicines()
     {
         return $this->hasMany(Medicine::class);
     }
 
-    public function purchaseInvoice()
+    public function purchaseInvoices()
     {
-        return $this->hasMany(PurchaseInvoice::class);
+        return $this->hasMany(PurchaseInvoice::class, 'supplier_id');
     }
 }
