@@ -104,22 +104,6 @@
                     </a>
                 </li>
                 @endcan
-                @can('view','App\\Models\Constant')
-                <li class="menu-item {{ request()->is('constants/*') || request()->is('constants') ? 'active' : '' }}">
-                    <a href="{{ route('dashboard.constants.index') }}" class="menu-link">
-                        <i class="fa-solid fa-cube me-2"></i>
-                        <div data-i18n="constants">ثوابت النظام</div>
-                    </a>
-                </li>
-                @endcan
-                @can('view','App\\Models\Currency')
-                <li class="menu-item {{ request()->is('currencies/*') || request()->is('currencies') ? 'active' : '' }}">
-                    <a href="{{ route('dashboard.currencies.index') }}" class="menu-link">
-                        <i class="fa-solid fa-coins me-2"></i>
-                        <div data-i18n="currencies">العملات</div>
-                    </a>
-                </li>
-                @endcan
             </ul>
         </li>
         @endif
