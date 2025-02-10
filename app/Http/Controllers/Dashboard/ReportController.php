@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
@@ -31,7 +32,8 @@ class ReportController extends Controller
 
     public function index(){
         $this->authorize('report.view');
-        return view('dashboard.pages.report');
+        $month = Carbon::now()->format('Y-m');
+        return view('dashboard.pages.report', compact('month'));
     }
 
 

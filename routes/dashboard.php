@@ -44,6 +44,7 @@ Route::group([
     Route::get('medicines/search', [MedicineConrtoller::class,'search'])->name('medicines.search');
 
     Route::post('purchaseInvoices/{purchaseInvoice}/print', [PurchaseInvoiceConrtoller::class,'print'])->name('purchaseInvoices.print');
+    Route::post('saleInvoices/{saleInvoice}/print', [SaleInvoiceConrtoller::class,'print'])->name('saleInvoices.print');
 
 
     /* ********************************************************** */
@@ -59,7 +60,7 @@ Route::group([
         'categories' => CategoryConrtoller::class,
         'medicines' => MedicineConrtoller::class,
         'purchaseInvoices' => PurchaseInvoiceConrtoller::class,
-        'salesInvoices' => SaleInvoiceConrtoller::class,
+        'saleInvoices' => SaleInvoiceConrtoller::class,
     ]);
     /* ********************************************************** */ 
 });

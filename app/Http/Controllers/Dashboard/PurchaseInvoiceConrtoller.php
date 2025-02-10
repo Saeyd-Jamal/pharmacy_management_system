@@ -27,6 +27,13 @@ class PurchaseInvoiceConrtoller extends Controller
         if ($request->ajax()) {
             $purchaseInvoices = PurchaseInvoice::query();
 
+            if($request->from_date && $request->to_date){
+                $purchaseInvoices->whereBetween('date', [$request->from_date, $request->to_date]);
+            }
+            if($request->year){
+                $purchaseInvoices->whereYear('date', $request->year);
+            }
+        
             return DataTables::of($purchaseInvoices)
                 ->addIndexColumn()
                 ->editColumn('count_items', function ($purchaseInvoice) {
@@ -66,7 +73,7 @@ class PurchaseInvoiceConrtoller extends Controller
 
         $purchaseInvoice->id = PurchaseInvoice::orderBy('id', 'desc')->first() ? PurchaseInvoice::orderBy('id', 'desc')->first()->id + 1 : 1;
         $purchaseInvoice->date = date('Y-m-d');
-        $purchaseInvoice->medicines = [];
+        $purchaseInvoice->medicines = collect([]);
 
         return view('dashboard.purchaseInvoices.create', compact('purchaseInvoice', 'suppliers', 'categories','medicines'));
     }

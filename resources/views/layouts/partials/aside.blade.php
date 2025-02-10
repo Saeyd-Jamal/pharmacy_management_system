@@ -44,10 +44,10 @@
         </li>
         @endcan
         @can('view','App\\Models\SaleInvoice')
-        <li class="menu-item {{ request()->is('salesInvoices/*') || request()->is('salesInvoices') ? 'active' : '' }}">
-            <a href="{{ route('dashboard.salesInvoices.index') }}" class="menu-link">
+        <li class="menu-item {{ request()->is('saleInvoices/*') || request()->is('saleInvoices') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.saleInvoices.index') }}" class="menu-link">
                 <i class="fa-solid fa-receipt me-2"></i>
-                <div data-i18n="salesInvoices">فواتير البيع</div>
+                <div data-i18n="saleInvoices">فواتير البيع</div>
             </a>
         </li>
         @endcan
