@@ -94,9 +94,7 @@
                                     </div>
                                 </th>
                                 <th>الحالة</th>
-                                <th>السعر الأساسي</th>
-                                <th>السعر</th>
-                                <th>الكمية</th>
+                                
                                 <th>تاريخ الإنتاج</th>
                                 <th>تاريخ الإنتهاء</th>
                                 <th>منشئ من</th>
@@ -165,9 +163,7 @@
                         { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, class: 'text-center'}, // عمود الترقيم التلقائي
                         { data: 'name', name: 'name', orderable: false},
                         { data: 'status', name: 'status' , orderable: false},
-                        { data: 'unit_price', name: 'unit_price' , orderable: false},
-                        { data: 'price', name: 'price' , orderable: false},
-                        { data: 'quantity', name: 'quantity' , orderable: false},
+                       
                         { data: 'production_date', name: 'production_date' , orderable: false},  
                         { data: 'explry_date', name: 'explry_date' , orderable: false},  
                         { data: 'created_by', name: 'created_by' , orderable: false},

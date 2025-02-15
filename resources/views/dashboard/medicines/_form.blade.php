@@ -26,15 +26,9 @@
                     <div class="mb-4 col-md-4">
                         <x-form.select label="المورد" :value="$medicine->supplier_id" name="supplier_id" :optionsId="$suppliers" required />
                     </div>
-                    <div class="mb-4 col-md-4">
-                        <x-form.input type="number" min="0" label="الكمية" :value="$medicine->quantity" name="quantity" required/>
-                    </div>
-                    <div class="mb-4 col-md-4">
-                        <x-form.input type="number" step="0.01" min="0" label="سعر الوحدة" :value="$medicine->unit_price" name="unit_price" required />
-                    </div>
-                    <div class="mb-4 col-md-4">
-                        <x-form.input type="number" step="0.01" min="0" label="السعر النهائي" :value="$medicine->price" name="price" required />
-                    </div>
+                   
+                   
+                   
                     <div class="mb-4 col-md-4">
                         <x-form.input label="تاريخ الإنتاج" type="date" :value="$medicine->production_date" name="production_date" required />
                     </div>
@@ -62,6 +56,37 @@
                             <x-form.input :value="$medicine->qr_code" name="qr_code" readonly  aria-label="Example text with button addon" aria-describedby="scan-btn" />
                         </div>
                     </div>
+
+
+
+                    <!-- قسم أحجام الأدوية -->
+                    <div class="mb-4 col-md-12">
+                        <h4>أحجام الأدوية</h4>
+                        <div id="sizes-container">
+                            @if (isset($medicine->sizes) && count($medicine->sizes) > 0)
+                                @foreach ($medicine->sizes as $index => $size)
+                                    <div class="size-row mb-3">
+                                        <input type="text" name="sizes[{{ $index }}][size]" placeholder="الحجم (شريط، كرتونة، إلخ)" value="{{ $size->size }}" required>
+                                        <input type="number" step="0.01" name="sizes[{{ $index }}][price]" placeholder="السعر" value="{{ $size->price }}" required>
+                                        <input type="number" name="sizes[{{ $index }}][quantity]" placeholder="الكمية" value="{{ $size->quantity }}" required>
+                                        <button type="button" class="btn btn-danger remove-size">حذف</button>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="size-row mb-3">
+                                    <input type="text" name="sizes[0][size]" placeholder="الحجم (شريط، كرتونة، إلخ)" required>
+                                    <input type="number" step="0.01" name="sizes[0][price]" placeholder="السعر" required>
+                                    <input type="number" name="sizes[0][quantity]" placeholder="الكمية" required>
+                                    <button type="button" class="btn btn-danger remove-size">حذف</button>
+                                </div>
+                            @endif
+                        </div>
+                        <button type="button" id="add-size" class="btn btn-primary">إضافة حجم</button>
+                    </div>
+                </div>
+
+
+
                 </div>
                 <div class="mt-2 d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary me-3">
@@ -96,5 +121,44 @@
                 }
             });
         })
+    </script>
+
+<script>
+        $(document).ready(function () {
+            // إضافة حجم جديد
+            $('#add-size').click(function () {
+                const container = $('#sizes-container');
+                const index = container.children().length;
+                const newRow = `
+                    <div class="size-row mb-3">
+                        <input type="text" name="sizes[${index}][size]" placeholder="الحجم (شريط، كرتونة، إلخ)" required>
+                        <input type="number" step="0.01" name="sizes[${index}][price]" placeholder="السعر" required>
+                        <input type="number" name="sizes[${index}][quantity]" placeholder="الكمية" required>
+                        <button type="button" class="btn btn-danger remove-size">حذف</button>
+                    </div>
+                `;
+                container.append(newRow);
+            });
+
+            // حذف حجم
+            $(document).on('click', '.remove-size', function () {
+                $(this).closest('.size-row').remove();
+            });
+
+            // باقي الكود الحالي
+            $('#production_date').on('change', function () {
+                $('#explry_date').attr('min', $(this).val());
+                let productionDate = new Date($(this).val());
+                let expiryDate = new Date(productionDate.setFullYear(productionDate.getFullYear() + 2));
+                $('#explry_date').val(expiryDate.toISOString().split('T')[0]).attr('min', $(this).val());
+            });
+
+            $('#scan-btn').click(function() {
+                var scannedQrCode = prompt("Scan the QR code value");
+                if (scannedQrCode) {
+                    $('#qr_code').val(scannedQrCode);
+                }
+            });
+        });
     </script>
 @endpush

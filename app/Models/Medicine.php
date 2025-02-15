@@ -76,4 +76,11 @@ class Medicine extends Model
     {
         return $this->belongsToMany(SaleInvoice::class, 'sale_invoice_items')->as('sale_invoice_items');
     }
+
+
+    public function sizes()
+    {
+        return $this->hasMany(MedicineSize::class);
+    }
+
 }

@@ -74,14 +74,16 @@ class MedicineConrtoller extends Controller
             'imageFile' => 'nullable|image',
             'description' => 'nullable|string',
             'status' => 'required|in:نشط,موقوف',
-            'unit_price' => 'required|numeric|min:0',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
+           
             'production_date' => 'required|date',
             'explry_date' => 'required|date|after:production_date',
             'supplier_id' => 'required|integer|exists:suppliers,id',
             'category_id' => 'required|integer|exists:categories,id',
             'qr_code' => 'nullable|string|unique:medicines,qr_code',
+            'sizes' => 'nullable|array', // أحجام الأدوية
+            'sizes.*.size' => 'required|string', // حجم الدواء
+             'sizes.*.price' => 'required|integer', // سعر الحجم
+            'sizes.*.quantity' => 'required|integer', // كمية الحجم
         ]);
 
         if ($request->hasFile('imageFile')) {
@@ -101,6 +103,17 @@ class MedicineConrtoller extends Controller
         ]);
 
         $medicine = Medicine::create($request->all());
+
+       // إضافة أحجام الأدوية
+    if ($request->has('sizes')) {
+        foreach ($request->sizes as $size) {
+            $medicine->sizes()->create([
+                'size' => $size['size'],
+                'price' => $size['price'],
+                'quantity' => $size['quantity'],
+            ]);
+        }
+    }
 
         return redirect()->route('dashboard.medicines.index')->with('success', __('Category created successfully.'));
     }
@@ -140,14 +153,15 @@ class MedicineConrtoller extends Controller
             'imageFile' => 'nullable|image',
             'description' => 'nullable|string',
             'status' => 'required|in:نشط,موقوف',
-            'unit_price' => 'required|numeric|min:0',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
             'production_date' => 'required|date',
             'explry_date' => 'required|date|after:production_date',
             'supplier_id' => 'required|integer|exists:suppliers,id',
             'category_id' => 'required|integer|exists:categories,id',
             'qr_code' => 'nullable|string|unique:medicines,qr_code,' . $medicine->id,
+            'sizes' => 'nullable|array', // أحجام الأدوية
+            'sizes.*.size' => 'required|string', // حجم الدواء
+             'sizes.*.price' => 'required|integer', // سعر الحجم
+            'sizes.*.quantity' => 'required|integer', // كمية الحجم
         ]);
 
         $old_image =   $medicine->image;
@@ -167,6 +181,17 @@ class MedicineConrtoller extends Controller
         ]);
         $medicine->update($request->all());
 
+        // تحديث أحجام الأدوية
+    if ($request->has('sizes')) {
+        $medicine->sizes()->delete(); // حذف الأحجام القديمة
+        foreach ($request->sizes as $size) {
+            $medicine->sizes()->create([
+                'size' => $size['size'],
+                'price' => $size['price'],
+                'quantity' => $size['quantity'],
+            ]);
+        }
+    }
 
         if ($old_image && $request->hasFile('imageFile')) {
             Storage::disk('public')->delete($old_image);
