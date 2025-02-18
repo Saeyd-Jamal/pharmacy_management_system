@@ -78,6 +78,15 @@
             </a>
         </li>
         @endcan
+
+        @can('view','App\\Models\Expense')
+        <li class="menu-item {{ request()->is('expense/*') || request()->is('expense') ? 'active' : '' }}">
+            <a href="{{ route('dashboard.expense.index') }}" class="menu-link">
+            <i class="fa-solid fa-money-check-dollar"></i>
+                <div data-i18n="expense">المصاريف</div>
+            </a>
+        </li>
+        @endcan
         <li class="menu-header small">
             <span class="menu-header-text" data-i18n="Apps &amp; Pages">إدارة النظام</span>
         </li>

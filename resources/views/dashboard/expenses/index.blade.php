@@ -1,6 +1,6 @@
 <x-front-layout>
     <x-slot:extra_nav_right>
-        <h4 class="card-title mb-0 col-2"> - جدول الأصناف</h4>
+        <h4 class="card-title mb-0 col-2"> - جدول المصروفات</h4>
     </x-slot:extra_nav_right>
     <x-slot:extra_nav>
         @can('create', 'App\\Models\Expense')
