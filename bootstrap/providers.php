@@ -6,5 +6,7 @@ return [
     Yajra\DataTables\DataTablesServiceProvider::class,
     Mccarlosen\LaravelMpdf\LaravelMpdfServiceProvider::class,
     Alkoumi\LaravelArabicNumbers\LaravelArabicNumbersServiceProvider::class,
+    Fx3costa\LaravelChartJs\Providers\ChartjsServiceProvider::class,
+
 
 ];
