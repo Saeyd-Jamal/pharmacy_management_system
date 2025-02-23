@@ -8,6 +8,7 @@ use App\Http\Controllers\Dashboard\ActivityLogController;
 use App\Http\Controllers\Dashboard\CategoryConrtoller;
 use App\Http\Controllers\Dashboard\ConstantController;
 use App\Http\Controllers\Dashboard\CurrencyController;
+use App\Http\Controllers\Dashboard\ExpenseController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\MedicineConrtoller;
 use App\Http\Controllers\Dashboard\PurchaseInvoiceConrtoller;
@@ -46,6 +47,10 @@ Route::group([
     Route::post('purchaseInvoices/{purchaseInvoice}/print', [PurchaseInvoiceConrtoller::class,'print'])->name('purchaseInvoices.print');
     Route::post('saleInvoices/{saleInvoice}/print', [SaleInvoiceConrtoller::class,'print'])->name('saleInvoices.print');
 
+    Route::get('expenses', [ExpenseController::class,'index'])->name('expense.index');
+    Route::get('expenses/create', [ExpenseController::class,'create'])->name('expense.create');
+    Route::post('expenses', [ExpenseController::class,'store'])->name('expense.store');
+
 
     /* ********************************************************** */
 
@@ -61,6 +66,7 @@ Route::group([
         'medicines' => MedicineConrtoller::class,
         'purchaseInvoices' => PurchaseInvoiceConrtoller::class,
         'saleInvoices' => SaleInvoiceConrtoller::class,
+       
     ]);
     /* ********************************************************** */ 
 });
