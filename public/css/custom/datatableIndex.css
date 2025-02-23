@@ -1,30 +1,30 @@
-body{
-    /* font-family: 'Cairo', sans-serif; */
-    font-family: 'Almarai', sans-serif !important;
+/* Table */
+thead{
+    background-color: var(--bs-primary) !important;
 }
-.main-content{
-    margin: 15px 0 0 0 !important;
+th, td {
+    border: 1px solid #06060675 !important;
+    border-color: #06060675 !important;
 }
-table.dataTable th:not(.sticky) {
-    position: relative !important;
-}
-table.dataTable th, table.dataTable td {
-    box-sizing: content-box !important;
-    white-space: nowrap !important;
-}
-table.dataTable th .filter-dropdown{
-    position: absolute;
-    bottom: -2px;
-    left: 2px;
+thead th{
+    font-weight: 800 !important;
+    color: white !important;
+    white-space: nowrap;
+    text-align: right !important;
 }
 tbody td{
     padding: 2px 5px !important;
     color: #000 !important;
     font-size: 14px !important;
 }
-/* تعطيل مؤشر الفرز لرأس العمود */
-th.no-sort::after {
-    display: none !important;
+tfoot td{
+    font-weight: 800 !important;
+
+}
+
+/* DataTable */
+.main-content{
+    margin: 15px 0 0 0 !important;
 }
 .breadcrumb{
     display: none !important;
@@ -67,6 +67,80 @@ table .dropdown-menu.show {
 }
 .searchable-checkbox{
     width: 100%;
+}
+table.dataTable th, table.dataTable td {
+    box-sizing: content-box !important;
+    white-space: nowrap !important;
+}
+
+table.dataTable th .filter-dropdown{
+    position: absolute;
+    bottom: -2px;
+    left: 2px;
+}
+
+
+/* Sticky Header */
+.table-container {
+    position: relative;
+}
+table.sticky {
+    width: 100%;
+    border-collapse: collapse;
+    display: block;
+    overflow: auto;
+    height: 450px;
+}
+table.sticky thead {
+    background-color: var(--bs-primary);
+    position: sticky;
+    top: -3px;
+    z-index: 4; /* تأكد من بقاء الرأس فوق بقية المحتوى */
+}
+table.sticky tfoot {
+    outline: 1px solid #06060675;
+    background-color: var(--bs-primary);
+    position: sticky;
+    bottom: -3px;
+    z-index: 3; /* تأكد من بقاء الرأس فوق بقية المحتوى */
+}
+
+
+
+table.sticky tbody {
+    display: table-row-group;
+    min-height: calc(100vh - 219px); /* تعيين الارتفاع الأقصى للجزء القابل للتمرير */
+    overflow-y: auto; /* السماح بالتمرير العمودي */
+}
+table.sticky tbody tr {
+    display: table-row;
+    width: 100%;
+    table-layout: fixed;
+}
+
+th.sticky,td.sticky {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    right: 0;
+    z-index: 3; /* تأكد من أن العمود المثبت يظهر فوق الأعمدة الأخرى */
+    background: #eeeeeec7;
+    border-color: #06060675 !important;
+}
+th.sticky {
+    background-color: var(--bs-primary) !important;
+    color: white !important;
+}
+td.sticky {
+    background-color: white !important;
+    color: #000 !important;
+}
+table.dataTable th:not(.sticky) {
+    position: relative !important;
+}
+
+/* تعطيل مؤشر الفرز لرأس العمود */
+th.no-sort::after {
+    display: none !important;
 }
 td.active {
     border: 2px solid #007bff;

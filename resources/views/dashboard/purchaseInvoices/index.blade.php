@@ -25,13 +25,15 @@
             .container-p-y:not([class^=pb-]):not([class*=" pb-"]){
                 padding-bottom: 0 !important;
             }
+            .dt-search{
+                display: none !important;
+            }
             @media (min-width: 767px) {
                 table{
                     display: table !important;
                     height: auto !important;
                 }
             }
-
         </style>
     @endpush
     <x-slot:extra_nav>
@@ -392,7 +394,7 @@
                     //     $(this).find('th.sticky').eq(3).css('right', (width0 + width1 + width2 - 5) + 'px');
                     //     $(this).find('th.sticky').eq(4).css('right', (width0 + width1 + width2 + width3 - 10) + 'px');
                     // });
-                    
+
                     // $('#purchaseInvoices-table tfoot tr').each(function() {
                     //     $(this).find('td.sticky').eq(0).css('right', (0) + 'px');
                     //     $(this).find('td.sticky').eq(1).css('right', (width0) + 'px');

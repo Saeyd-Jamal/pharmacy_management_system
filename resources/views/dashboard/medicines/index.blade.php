@@ -1,10 +1,10 @@
 <x-front-layout>
     @push('styles')
         <!-- DataTables CSS -->
-        <link rel="stylesheet" href="{{asset('css/datatable/jquery.dataTables.min.css')}}">
-        <link rel="stylesheet" href="{{asset('css/datatable/dataTables.bootstrap4.css')}}">
-        <link rel="stylesheet" href="{{asset('css/datatable/dataTables.dataTables.css')}}">
-        <link rel="stylesheet" href="{{asset('css/datatable/buttons.dataTables.css')}}">
+        <link rel="stylesheet" href="{{asset('css/plugins/datatable/jquery.dataTables.min.css')}}">
+        <link rel="stylesheet" href="{{asset('css/plugins/datatable/dataTables.bootstrap4.css')}}">
+        <link rel="stylesheet" href="{{asset('css/plugins/datatable/dataTables.dataTables.css')}}">
+        <link rel="stylesheet" href="{{asset('css/plugins/datatable/buttons.dataTables.css')}}">
 
         <link id="stickyTableLight" rel="stylesheet" href="{{ asset('css/custom/stickyTable.css') }}">
         <link rel="stylesheet" href="{{ asset('css/custom/style.css') }}">
@@ -24,6 +24,15 @@
             }
             .container-p-y:not([class^=pb-]):not([class*=" pb-"]){
                 padding-bottom: 0 !important;
+            }
+            .dt-search{
+                display: none !important;
+            }
+            @media (min-width: 767px) {
+                table{
+                    display: table !important;
+                    height: auto !important;
+                }
             }
         </style>
     @endpush
@@ -58,7 +67,7 @@
         <div class="col-md-12" style="padding: 0 2px;">
             <div class="card">
                 <div class="card-body table-container p-0">
-                    <table id="medicines-table" class="table table-striped table-bordered table-hover sticky" style="width:100%; height: calc(100vh - 155px);">
+                    <table id="medicines-table" class="table table-striped table-bordered  table-hover sticky" style="width:100%; height: calc(100vh - 155px);">
                         <thead>
                             <tr>
                                 <th></th>
@@ -94,7 +103,7 @@
                                     </div>
                                 </th>
                                 <th>الحالة</th>
-                                
+
                                 <th>تاريخ الإنتاج</th>
                                 <th>تاريخ الإنتهاء</th>
                                 <th>منشئ من</th>
@@ -163,9 +172,9 @@
                         { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, class: 'text-center'}, // عمود الترقيم التلقائي
                         { data: 'name', name: 'name', orderable: false},
                         { data: 'status', name: 'status' , orderable: false},
-                       
-                        { data: 'production_date', name: 'production_date' , orderable: false},  
-                        { data: 'explry_date', name: 'explry_date' , orderable: false},  
+
+                        { data: 'production_date', name: 'production_date' , orderable: false},
+                        { data: 'explry_date', name: 'explry_date' , orderable: false},
                         { data: 'created_by', name: 'created_by' , orderable: false},
                         { data: 'supplier_name', name: 'supplier_name' , orderable: false},
                         { data: 'category_name', name: 'category_name' , orderable: false},
@@ -182,7 +191,7 @@
                             return '';
                             @endcan
                         },},
-                    
+
                     ],
                     columnDefs: [
                         { targets: 1, searchable: false, orderable: false } // تعطيل الفرز والبحث على عمود الترقيم

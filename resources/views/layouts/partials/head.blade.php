@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light-style layout-navbar-fixed layout-menu-fixed layout-compact" dir="rtl" data-theme="theme-default" data-assets-path="{{ asset('assets') }}/" data-template="vertical-menu-template-starter" data-style="light"><head>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light-style layout-navbar-fixed layout-menu-fixed layout-compact" dir="rtl" data-theme="theme-default" data-assets-path="{{ asset('assets/') }}/" data-template="vertical-menu-template-starter" data-style="light">
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
@@ -50,10 +51,6 @@
         }
         body{
             font-family: "Almarai", serif;
-        }
-        .form-label{
-            font-weight: 600 !important;
-            font-size: 16px !important;
         }
     </style>
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-semi-dark.css')}}" />

@@ -20,35 +20,35 @@
     <div class="col-md-9">
         <div class="card">
             <div class="card-body invoice-preview-header rounded">
-            <div class="d-flex flex-wrap flex-column flex-sm-row justify-content-between text-heading">
-                <div class="mb-md-0 mb-6">
-                <div class="d-flex svg-illustration mb-6 gap-2 align-items-center">
-                    <div class="">
-                        <img src="{{ asset('imgs/logo.png') }}" alt="" width="50">
+                <div class="d-flex flex-wrap flex-column flex-sm-row justify-content-between text-heading">
+                    <div class="mb-md-0 mb-6">
+                    <div class="d-flex svg-illustration mb-6 gap-2 align-items-center">
+                        <div class="">
+                            <img src="{{ asset('imgs/logo.png') }}" alt="" width="50">
+                        </div>
+                        <span class="app-brand-text fw-bold fs-4 ms-50">{{ isset($btn_label) ? 'تعديل فاتورة شراء': 'إضافة فاتورة شراء جديدة' }}</span>
                     </div>
-                    <span class="app-brand-text fw-bold fs-4 ms-50">{{ isset($btn_label) ? 'تعديل فاتورة شراء': 'إضافة فاتورة شراء جديدة' }}</span>
+                    </div>
+                    <div class="col-md-5 col-8 pe-0 ps-0 ps-md-2">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-5 mb-2 d-md-flex align-items-center justify-content-end">
+                                <span class="h5 text-capitalize mb-0 text-nowrap">فاتورة</span>
+                            </dt>
+                            <dd class="col-sm-7">
+                                <div class="input-group input-group-merge disabled">
+                                    <span class="input-group-text">#</span>
+                                    <x-form.input name="invoice_id" :value="$purchaseInvoice->id"  disabled />
+                                </div>
+                            </dd>
+                            <dt class="col-sm-5 mb-2 d-md-flex align-items-center justify-content-end">
+                                <span class="fw-normal">التاريخ:</span>
+                            </dt>
+                            <dd class="col-sm-7">
+                                <x-form.input class="invoice-date flatpickr-input" type="date" placeholder="YYYY-MM-DD" :value="$purchaseInvoice->date" name="date" required />
+                            </dd>
+                        </dl>
+                    </div>
                 </div>
-                </div>
-                <div class="col-md-5 col-8 pe-0 ps-0 ps-md-2">
-                    <dl class="row mb-0">
-                        <dt class="col-sm-5 mb-2 d-md-flex align-items-center justify-content-end">
-                            <span class="h5 text-capitalize mb-0 text-nowrap">فاتورة</span>
-                        </dt>
-                        <dd class="col-sm-7">
-                            <div class="input-group input-group-merge disabled">
-                                <span class="input-group-text">#</span>
-                                <x-form.input name="invoice_id" :value="$purchaseInvoice->id"  disabled />
-                            </div>
-                        </dd>
-                        <dt class="col-sm-5 mb-2 d-md-flex align-items-center justify-content-end">
-                            <span class="fw-normal">التاريخ:</span>
-                        </dt>
-                        <dd class="col-sm-7">
-                            <x-form.input class="invoice-date flatpickr-input" type="date" placeholder="YYYY-MM-DD" :value="$purchaseInvoice->date" name="date" required />
-                        </dd>
-                    </dl>
-                </div>
-            </div>
             </div>
             <div class="card-header pb-0 pt-4">
             </div>
@@ -270,7 +270,7 @@
                                     </td>
                                     <td class="text-center">
                                         <span id="price_search_${value.id}" class="btn btn-primary">${value.price}</span>
-                                    </td>   
+                                    </td>
                                 </tr>
                             `);
                         });
@@ -294,7 +294,7 @@
             let item_count = $('#item_count').val();
             $('#add-item').on('click', function () {
                 let index = $('#items').children().length;
-                let item = 
+                let item =
                     `<div class="repeater-wrapper py-4" data-repeater-item=""  id="item-${index}">
                         <div class="d-flex  border border-primary rounded position-relative pe-0">
                             <div class="row w-100 p-6">
@@ -360,7 +360,7 @@
             // Select2
             $('#supplier_id').select2();
 
-            
+
         })
     </script>
 @endpush
