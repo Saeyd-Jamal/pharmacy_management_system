@@ -5,31 +5,26 @@
     <x-slot:extra_nav>
         @can('create', 'App\\Models\Expense')
         <div class="nav-item mx-2">
-            <a href="{{ route('dashboard.expense.create') }}" class="btn btn-success text-white m-0">
+            <a href="{{ route('dashboard.expenses.create') }}" class="btn btn-success text-white m-0">
                 <i class="fa-solid fa-plus fe-16"></i> إضافة
             </a>
         </div>
         @endcan
     </x-slot:extra_nav>
     <div class="card">
-        <!-- إضافة رابط الـ Bootstrap هنا -->
-        <head>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet">
-        </head>
+        @push('styles')
+            {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
+            <style>
+                td {
+                    color: #000 !important;
+                }
+                /* إخفاء مربع البحث */
+                #expenses-table_filter {
+                    display: none;
+                }
+            </style>
+        @endpush
 
-        <style>
-            td {
-                color: #000 !important;
-            }
-
-            /* إخفاء مربع البحث */
-            #expenses-table_filter {
-                display: none;
-            }
-
-           
-
-        </style>
         <div class="card-body">
             <div class="table-responsive text-nowrap">
                 <table id="expenses-table" class="table table-bordered table-hover">
@@ -57,18 +52,17 @@
                             <td>{{$expense->payment_method}}</td>
                             <td>
                                 <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                        data-bs-toggle="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                         <i class="ti ti-dots-vertical"></i>
                                     </button>
                                     <div class="dropdown-menu">
                                         @can('update', 'App\\Models\Expense')
-                                        <a class="dropdown-item" href="">
+                                        <a class="dropdown-item" href="{{route('dashboard.expenses.edit',$expense->id)}}">
                                             <i class="ti ti-pencil me-1"></i>تعديل
                                         </a>
                                         @endcan
                                         @can('delete', 'App\\Models\Expense')
-                                        <form action="" method="POST" onsubmit="return confirm('هل أنت متأكد؟');">
+                                        <form action="{{route('dashboard.expenses.destroy',$expense->id)}}" method="POST" onsubmit="return confirm('هل أنت متأكد؟');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="dropdown-item">
@@ -91,22 +85,4 @@
         </div>
     </div>
 
-    @push('scripts')
-        <!-- تضمين السكربتات اللازمة ل DataTables -->
-        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-        <script>
-            $(document).ready(function() {
-    $('#expenses-table').DataTable({
-       paging: false,  // إيقاف الـ pagination الخاص بـ DataTables
-        ordering: true,  // تمكين الترتيب
-        info: true,     // إخفاء معلومات السجلات
-        search: false,   // تعطيل البحث
-        order: [],       // إيقاف الترتيب الافتراضي
-        dom: 'Bfrtip'    // إزالة العناصر غير الضرورية
-    });
-});
-        </script>
-
-
-    @endpush
 </x-front-layout>

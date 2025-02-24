@@ -10,12 +10,13 @@ class MedicineSize extends Model
     protected $fillable = [
         'medicine_id',
         'size',
-        'price',
+        'basic_price',
+        'sale_price',
         'quantity',
-        
     ];
 
 
+    // Relationsheps
     public function medicine()
     {
         return $this->belongsTo(Medicine::class);

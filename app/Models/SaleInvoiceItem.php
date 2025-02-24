@@ -15,6 +15,8 @@ class SaleInvoiceItem extends Model
         'quantity',
         'unit_price',
         'total_price',
+        'size',
+        'size_id',
         'sale_invoice_id',
         'medicine_id',
     ];

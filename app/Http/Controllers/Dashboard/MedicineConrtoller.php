@@ -74,7 +74,6 @@ class MedicineConrtoller extends Controller
             'imageFile' => 'nullable|image',
             'description' => 'nullable|string',
             'status' => 'required|in:نشط,موقوف',
-           
             'production_date' => 'required|date',
             'explry_date' => 'required|date|after:production_date',
             'supplier_id' => 'required|integer|exists:suppliers,id',
@@ -82,7 +81,8 @@ class MedicineConrtoller extends Controller
             'qr_code' => 'nullable|string|unique:medicines,qr_code',
             'sizes' => 'nullable|array', // أحجام الأدوية
             'sizes.*.size' => 'required|string', // حجم الدواء
-             'sizes.*.price' => 'required|integer', // سعر الحجم
+            'sizes.*.basic_price' => 'required|numeric', // سعر الحجم
+            'sizes.*.sale_price' => 'required|numeric', // سعر الحجم
             'sizes.*.quantity' => 'required|integer', // كمية الحجم
         ]);
 
@@ -105,15 +105,17 @@ class MedicineConrtoller extends Controller
         $medicine = Medicine::create($request->all());
 
        // إضافة أحجام الأدوية
-    if ($request->has('sizes')) {
-        foreach ($request->sizes as $size) {
-            $medicine->sizes()->create([
-                'size' => $size['size'],
-                'price' => $size['price'],
-                'quantity' => $size['quantity'],
-            ]);
+        if ($request->has('sizes')) {
+            $medicine->sizes()->delete(); // حذف الأحجام القديمة
+            foreach ($request->sizes as $size) {
+                $medicine->sizes()->create([
+                    'size' => $size['size'],
+                    'basic_price' => $size['basic_price'],
+                    'sale_price' => $size['sale_price'],
+                    'quantity' => $size['quantity'],
+                ]);
+            }
         }
-    }
 
         return redirect()->route('dashboard.medicines.index')->with('success', __('Category created successfully.'));
     }
@@ -136,7 +138,7 @@ class MedicineConrtoller extends Controller
         $categories = Category::get();
         $btn_label = 'تعديل';
         $medicine->status = $medicine->status == 'active' ? 'نشط' : 'موقوف';
-        
+
 
         return view('dashboard.medicines.edit', compact('medicine', 'suppliers', 'categories', 'btn_label'));
     }
@@ -160,7 +162,8 @@ class MedicineConrtoller extends Controller
             'qr_code' => 'nullable|string|unique:medicines,qr_code,' . $medicine->id,
             'sizes' => 'nullable|array', // أحجام الأدوية
             'sizes.*.size' => 'required|string', // حجم الدواء
-             'sizes.*.price' => 'required|integer', // سعر الحجم
+            'sizes.*.basic_price' => 'required|numeric', // سعر الحجم
+            'sizes.*.sale_price' => 'required|numeric', // سعر الحجم
             'sizes.*.quantity' => 'required|integer', // كمية الحجم
         ]);
 
@@ -182,16 +185,17 @@ class MedicineConrtoller extends Controller
         $medicine->update($request->all());
 
         // تحديث أحجام الأدوية
-    if ($request->has('sizes')) {
-        $medicine->sizes()->delete(); // حذف الأحجام القديمة
-        foreach ($request->sizes as $size) {
-            $medicine->sizes()->create([
-                'size' => $size['size'],
-                'price' => $size['price'],
-                'quantity' => $size['quantity'],
-            ]);
+        if ($request->has('sizes')) {
+            $medicine->sizes()->delete(); // حذف الأحجام القديمة
+            foreach ($request->sizes as $size) {
+                $medicine->sizes()->create([
+                    'size' => $size['size'],
+                    'basic_price' => $size['basic_price'],
+                    'sale_price' => $size['sale_price'],
+                    'quantity' => $size['quantity'],
+                ]);
+            }
         }
-    }
 
         if ($old_image && $request->hasFile('imageFile')) {
             Storage::disk('public')->delete($old_image);
@@ -226,7 +230,7 @@ class MedicineConrtoller extends Controller
         $supplier_id = $request->supplier_id;
         $qr_code = $request->qr_code;
 
-        $medicines = Medicine::with('category', 'supplier');
+        $medicines = Medicine::with('category', 'supplier','sizes');
 
         if ($name) {
             $medicines->where('name', 'like', '%' . $name . '%');
@@ -241,9 +245,9 @@ class MedicineConrtoller extends Controller
         }
 
         if ($qr_code) {
-            $medicines->where('qr_code', $qr_code);
+            $medicines->where('qr_code','like', '%' . $qr_code . '%');
         }
-        
+
         return response()->json($medicines->get());
     }
 }

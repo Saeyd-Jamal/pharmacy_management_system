@@ -1,5 +1,5 @@
 <x-front-layout>
-    <form action="{{route('dashboard.expense.store')}}" method="post" class="col-12" enctype="multipart/form-data">
+    <form action="{{route('dashboard.expenses.store')}}" method="post" class="col-12" enctype="multipart/form-data">
         @csrf
         @include("dashboard.expenses._form")
     </form>

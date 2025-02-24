@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Medicine;
+use App\Models\MedicineSize;
 use App\Models\SaleInvoice;
 use App\Models\SaleInvoiceItem;
 use App\Models\Supplier;
@@ -33,6 +34,7 @@ class SaleInvoiceConrtoller extends Controller
             if($request->year){
                 $saleInvoices->whereYear('date', $request->year);
             }
+
             return DataTables::of($saleInvoices)
                 ->addIndexColumn()
                 ->editColumn('count_items', function ($saleInvoice) {
@@ -66,15 +68,17 @@ class SaleInvoiceConrtoller extends Controller
     {
         $this->authorize('create', SaleInvoice::class);
         $saleInvoice = new SaleInvoice();
-        $suppliers = Supplier::all();
         $categories = Category::all();
-        $medicines = Medicine::all();
-        $customer_names = SaleInvoice::select('customer_name')->distinct()->pluck('customer_name')->toArray();
+        $medicines = Medicine::with('sizes')->take(5)->get();
+
         $saleInvoice->id = SaleInvoice::orderBy('id', 'desc')->first() ? SaleInvoice::orderBy('id', 'desc')->first()->id + 1 : 1;
         $saleInvoice->date = date('Y-m-d');
         $saleInvoice->medicines = collect([]);
 
-        return view('dashboard.saleInvoices.create', compact('saleInvoice', 'suppliers', 'categories','medicines', 'customer_names'));
+        $customer_names = SaleInvoice::select('customer_name')->distinct()->pluck('customer_name')->toArray();
+        $suppliers = Supplier::all();
+
+        return view('dashboard.saleInvoices.create', compact('saleInvoice','categories','medicines','customer_names','suppliers'));
     }
 
     /**
@@ -91,24 +95,34 @@ class SaleInvoiceConrtoller extends Controller
             'quantity*' => 'required|integer',
             'unit_price*' => 'required|numeric',
             'total_price*' => 'required|numeric',
+            'size_id*' => 'required|integer|exists:medicine_sizes,id',
+            'size*' => 'required|string',
         ]);
         DB::beginTransaction();
         try{
+            $customer_name = $request->customer_name == null ? 'زبون عام' : $request->customer_name;
+
             $saleInvoice = SaleInvoice::create([
                 'date' => $request->date,
                 'total_amount' => $request->total_amount,
-                'customer_name' => $request->customer_name != '' || $request->customer_name != null ? $request->customer_name : 'زبون عام',
+                'customer_name' => $customer_name,
                 'created_by' => Auth::user()->id,
                 'created_by_name' => Auth::user()->name,
             ]);
             $items_count = $request->item_count;
             for ($i = 0; $i < $items_count; $i++) {
-                SaleInvoiceItem::create([
+                $saleInvoiceItem = SaleInvoiceItem::create([
                     'medicine_id' => $request->medicine_id[$i],
                     'sale_invoice_id' => $saleInvoice->id,
                     'unit_price' => $request->unit_price[$i],
                     'quantity' => $request->quantity[$i],
                     'total_price' => $request->total_price[$i],
+                    'size' => $request->size[$i],
+                    'size_id' => $request->size_id[$i],
+                ]);
+                $medicine = MedicineSize::find($saleInvoiceItem->size_id);
+                $medicine->update([
+                    'quantity' => $medicine->quantity - $saleInvoiceItem->quantity
                 ]);
             }
             DB::commit();
@@ -126,7 +140,7 @@ class SaleInvoiceConrtoller extends Controller
      */
     public function show(SaleInvoice $saleInvoice)
     {
-        
+
     }
 
     /**
@@ -135,12 +149,13 @@ class SaleInvoiceConrtoller extends Controller
     public function edit(SaleInvoice $saleInvoice)
     {
         $this->authorize('update', SaleInvoice::class);
+        $customer_names = SaleInvoice::select('customer_name')->distinct()->pluck('customer_name')->toArray();
         $suppliers = Supplier::all();
         $categories = Category::all();
         $medicines = Medicine::all();
-        $customer_names = SaleInvoice::select('customer_name')->distinct()->pluck('customer_name')->toArray();
+
         $btn_label = "تعديل";
-        return view('dashboard.saleInvoices.edit', compact('saleInvoice','btn_label', 'suppliers', 'categories','medicines','customer_names'));
+        return view('dashboard.saleInvoices.edit', compact('saleInvoice','btn_label', 'categories','medicines','customer_names','suppliers'));
     }
 
     /**
@@ -157,13 +172,16 @@ class SaleInvoiceConrtoller extends Controller
             'quantity*' => 'required|integer',
             'unit_price*' => 'required|numeric',
             'total_price*' => 'required|numeric',
+            'size_id*' => 'required|integer|exists:medicine_sizes,id',
+            'size*' => 'required|string',
         ]);
         DB::beginTransaction();
         try{
+            $customer_name = $request->customer_name == null ? 'زبون عام' : $request->customer_name;
             $saleInvoice->update([
                 'date' => $request->date,
                 'total_amount' => $request->total_amount,
-                'customer_name' => $request->customer_name != '' || $request->customer_name != null ? $request->customer_name : 'زبون عام',
+                'customer_name' => $customer_name,
                 'created_by' => Auth::user()->id,
                 'created_by_name' => Auth::user()->name,
             ]);
@@ -171,18 +189,30 @@ class SaleInvoiceConrtoller extends Controller
             for ($i = 0; $i < $items_count; $i++) {
                 $saleInvoiceitems = SaleInvoiceItem::where('sale_invoice_id', $saleInvoice->id)->where('medicine_id', $request->medicine_id[$i])->first();
                 if ($saleInvoiceitems) {
+                    $medicine = MedicineSize::find($saleInvoiceitems->size_id);
+                    $medicine->update([
+                        'quantity' => ($medicine->quantity + $saleInvoiceitems->quantity) - $request->quantity[$i]
+                    ]);
                     $saleInvoiceitems->update([
                         'unit_price' => $request->unit_price[$i],
                         'quantity' => $request->quantity[$i],
                         'total_price' => $request->total_price[$i],
+                        'size' => $request->size[$i],
+                        'size_id' => $request->size_id[$i],
                     ]);
                 }else{
-                    SaleInvoiceItem::create([
+                    $saleInvoiceitem = SaleInvoiceItem::create([
                         'medicine_id' => $request->medicine_id[$i],
                         'sale_invoice_id' => $saleInvoice->id,
                         'unit_price' => $request->unit_price[$i],
                         'quantity' => $request->quantity[$i],
                         'total_price' => $request->total_price[$i],
+                        'size' => $request->size[$i],
+                        'size_id' => $request->size_id[$i],
+                    ]);
+                    $medicine = MedicineSize::find($saleInvoiceitem->size_id);
+                    $medicine->update([
+                        'quantity' => $medicine->quantity - $saleInvoiceitem->quantity
                     ]);
                 }
             }
@@ -201,8 +231,16 @@ class SaleInvoiceConrtoller extends Controller
     public function destroy(SaleInvoice $saleInvoice)
     {
         $this->authorize('delete', SaleInvoice::class);
+        $saleInvoiceitems = SaleInvoiceItem::where('sale_invoice_id', $saleInvoice->id)->get();
+        foreach ($saleInvoiceitems as $saleInvoiceitem) {
+            $medicine = MedicineSize::find($saleInvoiceitem->size_id);
+            $medicine->update([
+                'quantity' => $medicine->quantity + $saleInvoiceitem->quantity
+            ]);
+        }
         $saleInvoice->delete();
-        return redirect()->route('dashboard.saleInvoices.index')->with('success', __('Item deleted successfully.'));
+
+        return response()->json(['message' => __('Item deleted successfully.')]);
     }
 
     public function print(SaleInvoice $saleInvoice)

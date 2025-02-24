@@ -25,7 +25,7 @@ Route::group([
     'middleware' => ['auth'],
     'as' => 'dashboard.'
 ], function () {
-    /* ********************************************************** */ 
+    /* ********************************************************** */
 
     // Dashboard ************************
     Route::get('/', [HomeController::class,'index'])->name('home');
@@ -41,16 +41,11 @@ Route::group([
     Route::get('report', [ReportController::class,'index'])->name('report.index');
     Route::post('report/export', [ReportController::class,'export'])->name('report.export');
 
-    /* ********************************************************** */ 
+    /* ********************************************************** */
     Route::get('medicines/search', [MedicineConrtoller::class,'search'])->name('medicines.search');
 
     Route::post('purchaseInvoices/{purchaseInvoice}/print', [PurchaseInvoiceConrtoller::class,'print'])->name('purchaseInvoices.print');
     Route::post('saleInvoices/{saleInvoice}/print', [SaleInvoiceConrtoller::class,'print'])->name('saleInvoices.print');
-
-    Route::get('expenses', [ExpenseController::class,'index'])->name('expense.index');
-    Route::get('expenses/create', [ExpenseController::class,'create'])->name('expense.create');
-    Route::post('expenses', [ExpenseController::class,'store'])->name('expense.store');
-
 
     /* ********************************************************** */
 
@@ -66,7 +61,7 @@ Route::group([
         'medicines' => MedicineConrtoller::class,
         'purchaseInvoices' => PurchaseInvoiceConrtoller::class,
         'saleInvoices' => SaleInvoiceConrtoller::class,
-       
+        'expenses' => ExpenseController::class,
     ]);
-    /* ********************************************************** */ 
+    /* ********************************************************** */
 });

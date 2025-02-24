@@ -9,8 +9,8 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                  
-                    
+
+
   <!-- بوكس فواتير الشراء -->
                     <div class="col-md-6 mb-3">
                         <div class="card h-100" style="background-color: #f0f8ff; border-radius: 10px;">
@@ -32,7 +32,7 @@
                         </div>
                     </div>
 
-                    
+
 
             <!-- بوكس فواتير البيع -->
             <div class="col-md-6 mb-3">
@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="row">
-                {!! $chartjs->render() !!}
+                {{-- {!! $chartjs->render() !!} --}}
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@
     'value' => '',
     'name',
     'label'=>'',
+    'rows' => 3
 ])
 @if ($label)
     <label class="form-label" for="{{$name}}">
@@ -11,7 +12,7 @@
 
 <textarea
     name="{{$name}}"
-    rows="4"
+    rows="{{$rows}}"
     {{$attributes->class([
         'form-control',
         'is-invalid' => $errors->has($name)

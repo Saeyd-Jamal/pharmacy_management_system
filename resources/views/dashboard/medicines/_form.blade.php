@@ -61,14 +61,17 @@
                                 @foreach ($medicine->sizes as $index => $size)
                                     <div class="size-row row mb-4 align-items-center">
                                         <div class="row col-11">
-                                            <div class="mb-4 col-md-4">
+                                            <div class="mb-4 col-md-3">
                                                 <x-form.select label="الحجم" :value="$size->size" name="sizes[{{ $index }}][size]" :options="['كرتونة','شريط','حبة']" required />
                                             </div>
-                                            <div class="mb-4 col-md-4">
-                                                <x-form.input type="number" label="الكمية" :value="$size->quantity" name="sizes[{{ $index }}][quantity]" required />
+                                            <div class="mb-4 col-md-3">
+                                                <x-form.input type="number" min='0' label="الكمية" :value="$size->quantity" name="sizes[{{ $index }}][quantity]" required />
                                             </div>
-                                            <div class="mb-4 col-md-4">
-                                                <x-form.input type="number" step="0.01" label="السعر" :value="$size->price" name="sizes[{{ $index }}][price]" required />
+                                            <div class="mb-4 col-md-3">
+                                                <x-form.input type="number" min='0' step="0.01" label="السعر الأساسي" :value="$size->basic_price" name="sizes[{{ $index }}][basic_price]" required />
+                                            </div>
+                                            <div class="mb-4 col-md-3">
+                                                <x-form.input type="number" min='0' step="0.01" label="سعر بيع" :value="$size->sale_price" name="sizes[{{ $index }}][sale_price]" required />
                                             </div>
                                         </div>
                                         <button type="button" class="btn btn-danger remove-size ms-2 col-1 p-2">حذف</button>
@@ -77,14 +80,17 @@
                             @else
                                 <div class="size-row row  mb-4 align-items-center">
                                     <div class="row col-11">
-                                        <div class="mb-4 col-md-4">
+                                        <div class="mb-4 col-md-3">
                                             <x-form.select label="الحجم" value="كرتونة" name="sizes[0][size]" :options="['كرتونة','شريط','حبة']" required />
                                         </div>
-                                        <div class="mb-4 col-md-4">
-                                            <x-form.input type="number" label="الكمية" name="sizes[0][quantity]" required />
+                                        <div class="mb-4 col-md-3">
+                                            <x-form.input type="number" min='0' label="الكمية" name="sizes[0][quantity]" required />
                                         </div>
-                                        <div class="mb-4 col-md-4">
-                                            <x-form.input type="number" step="0.01" label="السعر" name="sizes[0][price]" required />
+                                        <div class="mb-4 col-md-3">
+                                            <x-form.input type="number" min='0' step="0.01" label="السعر الأساسي" name="sizes[0][basic_price]" required />
+                                        </div>
+                                        <div class="mb-4 col-md-3">
+                                            <x-form.input type="number" min='0' step="0.01" label="سعر بيع" name="sizes[0][sale_price]" required />
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-danger remove-size ms-2 col-1 p-2">حذف</button>
@@ -108,19 +114,22 @@
     $(document).ready(function () {
         // إضافة حجم جديد
         $('#add-size').click(function () {
-            const container = $('#sizes-container');
-            const index = container.children().length;
-            const newRow = `
+            let container = $('#sizes-container');
+            let index = container.children().length;
+            let newRow = `
                 <div class="size-row row mb-4 align-items-center">
                     <div class="row col-11">
-                        <div class="mb-4 col-md-4">
+                        <div class="mb-4 col-md-3">
                             <x-form.select label="الحجم" name="sizes[${index}][size]" :options="['كرتونة','شريط','حبة']" required />
                         </div>
-                        <div class="mb-4 col-md-4">
-                            <x-form.input type="number" label="الكمية" name="sizes[${index}][quantity]" required />
+                        <div class="mb-4 col-md-3">
+                            <x-form.input type="number" min='0' label="الكمية" name="sizes[${index}][quantity]" required />
                         </div>
-                        <div class="mb-4 col-md-4">
-                            <x-form.input type="number" step="0.01" label="السعر" name="sizes[${index}][price]" required />
+                        <div class="mb-4 col-md-3">
+                            <x-form.input type="number" min='0' step="0.01" label="السعر الأساسي" name="sizes[${index}][basic_price]" required />
+                        </div>
+                        <div class="mb-4 col-md-3">
+                            <x-form.input type="number" min='0' step="0.01" label="سعر بيع" name="sizes[${index}][sale_price]" required />
                         </div>
                     </div>
                     <button type="button" class="btn btn-danger remove-size ms-2 col-1 p-2">حذف</button>
@@ -144,9 +153,6 @@
 
         $('#scan-btn').click(function() {
             $('#qr_code').focus();
-            if (scannedQrCode) {
-                $('#qr_code').val(scannedQrCode);
-            }
         });
     });
 </script>

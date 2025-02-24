@@ -15,6 +15,8 @@ class PurchaseInvoiceItem extends Model
         'quantity',
         'unit_price',
         'total_price',
+        'size',
+        'size_id',
         'purchase_invoice_id',
         'medicine_id',
     ];

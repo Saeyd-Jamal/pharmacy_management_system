@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('medicine_sizes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('medicine_id')->constrained('medicines')->onDelete('cascade');
-            $table->string('size'); 
-            $table->double('price'); 
-            $table->integer('quantity'); 
+            $table->string('size');
+            $table->double('basic_price');
+            $table->double('sale_price');
+            $table->integer('quantity');
             $table->timestamps();
         });
     }

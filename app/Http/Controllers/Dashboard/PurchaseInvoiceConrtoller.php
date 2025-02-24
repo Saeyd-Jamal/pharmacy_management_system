@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Medicine;
+use App\Models\MedicineSize;
 use App\Models\PurchaseInvoice;
 use App\Models\PurchaseInvoiceItem;
 use App\Models\Supplier;
@@ -33,7 +34,7 @@ class PurchaseInvoiceConrtoller extends Controller
             if($request->year){
                 $purchaseInvoices->whereYear('date', $request->year);
             }
-        
+
             return DataTables::of($purchaseInvoices)
                 ->addIndexColumn()
                 ->editColumn('count_items', function ($purchaseInvoice) {
@@ -69,7 +70,7 @@ class PurchaseInvoiceConrtoller extends Controller
         $purchaseInvoice = new PurchaseInvoice();
         $suppliers = Supplier::all();
         $categories = Category::all();
-        $medicines = Medicine::all();
+        $medicines = Medicine::with('sizes')->take(5)->get();
 
         $purchaseInvoice->id = PurchaseInvoice::orderBy('id', 'desc')->first() ? PurchaseInvoice::orderBy('id', 'desc')->first()->id + 1 : 1;
         $purchaseInvoice->date = date('Y-m-d');
@@ -92,6 +93,8 @@ class PurchaseInvoiceConrtoller extends Controller
             'quantity*' => 'required|integer',
             'unit_price*' => 'required|numeric',
             'total_price*' => 'required|numeric',
+            'size_id*' => 'required|integer|exists:medicine_sizes,id',
+            'size*' => 'required|string',
         ]);
         DB::beginTransaction();
         try{
@@ -105,12 +108,18 @@ class PurchaseInvoiceConrtoller extends Controller
             ]);
             $items_count = $request->item_count;
             for ($i = 0; $i < $items_count; $i++) {
-                PurchaseInvoiceItem::create([
+                $purchaseInvoiceItem = PurchaseInvoiceItem::create([
                     'medicine_id' => $request->medicine_id[$i],
                     'purchase_invoice_id' => $purchaseInvoice->id,
                     'unit_price' => $request->unit_price[$i],
                     'quantity' => $request->quantity[$i],
                     'total_price' => $request->total_price[$i],
+                    'size' => $request->size[$i],
+                    'size_id' => $request->size_id[$i],
+                ]);
+                $medicine = MedicineSize::find($purchaseInvoiceItem->size_id);
+                $medicine->update([
+                    'quantity' => $medicine->quantity + $purchaseInvoiceItem->quantity
                 ]);
             }
             DB::commit();
@@ -128,7 +137,7 @@ class PurchaseInvoiceConrtoller extends Controller
      */
     public function show(PurchaseInvoice $purchaseInvoice)
     {
-        
+
     }
 
     /**
@@ -158,6 +167,8 @@ class PurchaseInvoiceConrtoller extends Controller
             'quantity*' => 'required|integer',
             'unit_price*' => 'required|numeric',
             'total_price*' => 'required|numeric',
+            'size_id*' => 'required|integer|exists:medicine_sizes,id',
+            'size*' => 'required|string',
         ]);
         DB::beginTransaction();
         try{
@@ -173,18 +184,30 @@ class PurchaseInvoiceConrtoller extends Controller
             for ($i = 0; $i < $items_count; $i++) {
                 $purchaseInvoiceitems = PurchaseInvoiceItem::where('purchase_invoice_id', $purchaseInvoice->id)->where('medicine_id', $request->medicine_id[$i])->first();
                 if ($purchaseInvoiceitems) {
+                    $medicine = MedicineSize::find($purchaseInvoiceitems->size_id);
+                    $medicine->update([
+                        'quantity' => ($medicine->quantity - $purchaseInvoiceitems->quantity) + $request->quantity[$i]
+                    ]);
                     $purchaseInvoiceitems->update([
                         'unit_price' => $request->unit_price[$i],
                         'quantity' => $request->quantity[$i],
                         'total_price' => $request->total_price[$i],
+                        'size' => $request->size[$i],
+                        'size_id' => $request->size_id[$i],
                     ]);
                 }else{
-                    PurchaseInvoiceItem::create([
+                    $purchaseInvoiceitem = PurchaseInvoiceItem::create([
                         'medicine_id' => $request->medicine_id[$i],
                         'purchase_invoice_id' => $purchaseInvoice->id,
                         'unit_price' => $request->unit_price[$i],
                         'quantity' => $request->quantity[$i],
                         'total_price' => $request->total_price[$i],
+                        'size' => $request->size[$i],
+                        'size_id' => $request->size_id[$i],
+                    ]);
+                    $medicine = MedicineSize::find($purchaseInvoiceitem->size_id);
+                    $medicine->update([
+                        'quantity' => $medicine->quantity + $purchaseInvoiceitem->quantity
                     ]);
                 }
             }
@@ -203,8 +226,16 @@ class PurchaseInvoiceConrtoller extends Controller
     public function destroy(PurchaseInvoice $purchaseInvoice)
     {
         $this->authorize('delete', PurchaseInvoice::class);
+        $purchaseInvoiceitems = PurchaseInvoiceItem::where('purchase_invoice_id', $purchaseInvoice->id)->get();
+        foreach ($purchaseInvoiceitems as $purchaseInvoiceitem) {
+            $medicine = MedicineSize::find($purchaseInvoiceitem->size_id);
+            $medicine->update([
+                'quantity' => $medicine->quantity - $purchaseInvoiceitem->quantity
+            ]);
+        }
         $purchaseInvoice->delete();
-        return redirect()->route('dashboard.purchaseInvoices.index')->with('success', __('Item deleted successfully.'));
+
+        return response()->json(['message' => __('Item deleted successfully.')]);
     }
 
     public function print(PurchaseInvoice $purchaseInvoice)

@@ -19,9 +19,6 @@ class Medicine extends Model
         'image',
         'status',
         'description',
-        'price',
-        'unit_price',
-        'quantity',
         'production_date',
         'explry_date',
         'created_by',
@@ -76,7 +73,6 @@ class Medicine extends Model
     {
         return $this->belongsToMany(SaleInvoice::class, 'sale_invoice_items')->as('sale_invoice_items');
     }
-
 
     public function sizes()
     {

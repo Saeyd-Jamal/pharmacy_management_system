@@ -25,6 +25,6 @@ class SaleInvoice extends Model
 
     public function medicines()
     {
-        return $this->belongsToMany(Medicine::class, 'sale_invoice_items')->as('items')->withPivot('quantity', 'unit_price','total_price');;
+        return $this->belongsToMany(Medicine::class, 'sale_invoice_items')->as('items')->withPivot('quantity', 'unit_price','total_price','size_id','size');;
     }
 }
